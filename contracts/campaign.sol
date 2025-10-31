@@ -5,6 +5,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 
 contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -24,7 +25,7 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     struct userDetail {
         investmentDetail[] investments;
         uint256 totalAllocatedShares;
-        uint256 lastclaimedIndex;
+        uint16 lastclaimedIndex;
         uint256 lastclaimTimestamp;
     }
 
@@ -34,7 +35,8 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     address public escrowaddress;
     uint16 private feedCount = 0;
 
-    mapping(uint16 => uint256) internal sharePriceHistory;
+    mapping(uint16 => sharePrice) internal sharePriceHistory;
+    mapping(address => userDetail) internal userDetails;
     mapping(address => bool) public isKycVerified;
 
     
@@ -109,28 +111,40 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         IERC20(token).transfer(msg.sender, amount);
     }
 
-    function _feedFunds(uint256 _amount, address _from, IERC20 _token) internal pure returns(bool){
-        // require(_amount > 0, "ROI: invalid amount");
-        // require(address(_token) != address(0), "ROI: invalid address");
-        // SafeERC20.safeTransferFrom(_token, _from, address(this), _amount);
-        // uint256 pricePerShare = numberOfsharesAllocated / 
-        // feedCount = feedCount + 1;
-        // feedhistory[feedCount] = _amount;
-        // emit FUNDSAdded(_amount, feedCount, block.timestamp);
+    function _feedFunds(uint256 _amount, address _from) internal returns(bool){
+        require(_amount > 0, "ROI: invalid amount");
+        SafeERC20.safeTransferFrom(IERC20(asset()), _from, address(this), _amount);
+        feedCount = feedCount + 1;
+        (,uint256 price) = Math.tryDiv(totalAssets(), _amount);
+        sharePriceHistory[feedCount] = sharePrice(
+            price,
+            block.timestamp
+        );
+        emit FUNDSAdded(_amount, feedCount, block.timestamp);
         return true;
     }
 
     function _ROIclaim(address _to) internal {
         // require(block.timestamp > _lastclaim + 30 days, "ROI: no dues are pending");
 
-        // uint256 _pendingclaimCount = block.timestamp - (_lastclaim) / 30 days;
-        // uint256 _claimableAmount  = _calculateROI(_pendingclaimCount, _holdingshares);
+        uint16 Index = userDetails[_to].lastclaimedIndex + uint16(1);
+        uint256 _claimableAmount  = _calculateROI(Index, _to);
+        SafeERC20.safeTransfer(IERC20(asset()), _to, _claimableAmount);
     }
 
 
-    function _calculateROI(uint256 _claimCount, uint256 _holdingshares) internal returns(uint256 claimable){
+    function _calculateROI(uint16 Index, address _to) internal view returns(uint256 claimable){
+
+        for (uint16 i = Index; i <= feedCount; i++) 
+        {
+            uint256 shares = userDetails[_to].investments[i].allocatedShares;
+            uint256 price = sharePriceHistory[i].pricePerShare;
+
+            (,uint256 ROI) = Math.tryMul(shares, price);
+
+            claimable = claimable + ROI;
+
+        }
         
     }
 }
-
-
