@@ -1,0 +1,56 @@
+[
+  {
+    "contractFqn": "project/contracts/AumFinToken.sol:AumFinBEPToken",
+    "type": "deployment",
+    "gas": 1487599,
+    "size": 9286
+  },
+  {
+    "contractFqn": "project/contracts/campaign.sol:CampaignVault",
+    "type": "deployment",
+    "gas": 2921476,
+    "size": 15524
+  },
+  {
+    "contractFqn": "project/contracts/AumFinToken.sol:AumFinBEPToken",
+    "type": "function",
+    "functionSig": "MINTER_ROLE()",
+    "gas": 21455
+  },
+  {
+    "contractFqn": "project/contracts/AumFinToken.sol:AumFinBEPToken",
+    "type": "function",
+    "functionSig": "grantRole(bytes32,address)",
+    "gas": 52045
+  },
+  {
+    "contractFqn": "project/contracts/AumFinToken.sol:AumFinBEPToken",
+    "type": "function",
+    "functionSig": "transfer(address,uint256)",
+    "gas": 52143
+  },
+  {
+    "contractFqn": "project/contracts/AumFinToken.sol:AumFinBEPToken",
+    "type": "function",
+    "functionSig": "balanceOf(address)",
+    "gas": 24293
+  },
+  {
+    "contractFqn": "project/contracts/AumFinToken.sol:AumFinBEPToken",
+    "type": "function",
+    "functionSig": "approve(address,uint256)",
+    "gas": 46973
+  },
+  {
+    "contractFqn": "project/contracts/AumFinToken.sol:AumFinBEPToken",
+    "type": "function",
+    "functionSig": "allowance(address,address)",
+    "gas": 25033
+  },
+  {
+    "contractFqn": "project/contracts/campaign.sol:CampaignVault",
+    "type": "function",
+    "functionSig": "deposit(uint256,address)",
+    "gas": 113712
+  }
+]

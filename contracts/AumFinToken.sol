@@ -11,6 +11,7 @@ contract AumFinBEPToken is ERC20, AccessControl {
 
     constructor(string memory name_, string memory symbol_, address admin) ERC20(name_, symbol_) {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
+        _mint(admin, 10000000000000 * 10 ** decimals());
     }
 
     function mint(address to, uint256 amount) external {
