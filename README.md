@@ -55,3 +55,36 @@ After setting the variable, you can run the deployment with the Sepolia network:
 ```shell
 npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
 ```
+
+
+
+testing commands:
+------------------
+npx hardhat test --gas-stats 
+
+
+
+
+
+userDetail
+
+1. deposited amount
+2. lastclaimedtime
+3. lastclaimedIndex
+4. totalClaimedamount
+5. allocatedshares
+
+
+mapping(address => userDetail) internal userDetails;
+
+
+
+if users can deposit multiple times in the same RWA investment campaign, and ROI is calculated based on a monthly changing sharePrice, then when a user claims ROI after two months, how should we determine their total claimable ROI — given that each month’s share price is different and they might have changed their holdings in between? also  on which basis we need to  calculate the 30days timeperiod for claim?
+
+sharePrice = totalFundsAllocatedForROI / totalShares;
+
+ROI = totalHoldingshares * sharePrice;
+
+
+
+

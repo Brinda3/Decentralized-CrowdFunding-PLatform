@@ -9,14 +9,36 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
+    struct sharePrice {
+        uint256 pricePerShare;
+        uint256 date;
+    }
+
+
+    struct investmentDetail {
+        uint256 amount;
+        uint256 allocatedShares;
+        uint256 timeStamp;
+    }
+
+    struct userDetail {
+        investmentDetail[] investments;
+        uint256 totalAllocatedShares;
+        uint256 lastclaimedIndex;
+        uint256 lastclaimTimestamp;
+    }
+
     uint256 public fundingCap;       
     uint256 public minDeposit;       
     uint256 public unlockTime;       
     address public escrowaddress;
+    uint16 private feedCount = 0;
+
+    mapping(uint16 => uint256) internal sharePriceHistory;
     mapping(address => bool) public isKycVerified;
 
     
-    event YieldAdded(uint256 amount, uint256 timestamp);
+    event FUNDSAdded(uint256 amount, uint256 index, uint256 time);
 
 
     constructor(
@@ -76,13 +98,6 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         return super.redeem(shares, receiver, owner);
     }
 
-   
-    function addYield(uint256 amount) external onlyRole(ADMIN_ROLE) nonReentrant {
-        require(amount > 0, "zero");
-        IERC20(asset()).transferFrom(msg.sender, address(this), amount);
-        emit YieldAdded(amount, block.timestamp);
-    }
-
 
     function timeLeftToUnlock() external view returns (uint256) {
         return block.timestamp >= unlockTime ? 0 : unlockTime - block.timestamp;
@@ -92,6 +107,29 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     function rescueTokens(address token, uint256 amount) external onlyRole(ADMIN_ROLE) {
         require(token != address(asset()), "no rescue underlying");
         IERC20(token).transfer(msg.sender, amount);
+    }
+
+    function _feedFunds(uint256 _amount, address _from, IERC20 _token) internal pure returns(bool){
+        // require(_amount > 0, "ROI: invalid amount");
+        // require(address(_token) != address(0), "ROI: invalid address");
+        // SafeERC20.safeTransferFrom(_token, _from, address(this), _amount);
+        // uint256 pricePerShare = numberOfsharesAllocated / 
+        // feedCount = feedCount + 1;
+        // feedhistory[feedCount] = _amount;
+        // emit FUNDSAdded(_amount, feedCount, block.timestamp);
+        return true;
+    }
+
+    function _ROIclaim(address _to) internal {
+        // require(block.timestamp > _lastclaim + 30 days, "ROI: no dues are pending");
+
+        // uint256 _pendingclaimCount = block.timestamp - (_lastclaim) / 30 days;
+        // uint256 _claimableAmount  = _calculateROI(_pendingclaimCount, _holdingshares);
+    }
+
+
+    function _calculateROI(uint256 _claimCount, uint256 _holdingshares) internal returns(uint256 claimable){
+        
     }
 }
 

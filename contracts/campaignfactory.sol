@@ -85,10 +85,6 @@ contract CampaignFactory is AccessControl {
         return campaigns[id];
     }
 
- 
-
-  
-
     function updateLabel(uint256 id, string calldata newLabel) external onlyRole(FACTORY_ADMIN) {
         require(campaigns[id].campaignAddress != address(0), "unknown id");
         campaigns[id].label = newLabel;
