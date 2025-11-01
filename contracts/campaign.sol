@@ -30,10 +30,12 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     }
 
     uint256 public fundingCap;       
-    uint256 public minDeposit;       
-    uint256 public unlockTime;       
-    address public escrowaddress;
+    uint256 public minDeposit;              
     uint16 private feedCount = 0;
+    enum PayoutType { CapitalAppreciation, Dividends, Both }
+    PayoutType public payoutType;
+    uint256 public tokenPrice;
+    address public admin;
 
     mapping(uint16 => sharePrice) internal sharePriceHistory;
     mapping(address => userDetail) internal userDetails;
@@ -41,24 +43,31 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
 
     
     event FUNDSAdded(uint256 amount, uint256 index, uint256 time);
+    event OwnerChanged(address prevAdmin, address newUser);
 
 
     constructor(
-        IERC20 asset_,               
-        string memory name_,
-        string memory symbol_,
-        address admin_,
-        uint256 fundingCap_,
-        uint256 minDeposit_,
-        uint256 unlockTime_
+        address admin,
+        string memory _name,
+        string memory _symbol,
+        uint256 _goal,
+        uint256 _minInvestment,
+        uint256 _maxInvestment,
+        uint256 _startTime,
+        uint256 _endTime,
+        uint256 _tokenPrice,
+        PayoutType _payoutType,
+        Milestone[] memory _milestones,
+        uint16 _investmentFeeBps,
+        uint16 _payoutFeeBps
+        
     ) ERC20(name_, symbol_) ERC4626(asset_) {
         require(admin_ != address(0), "zero admin");
-        require(unlockTime_ > block.timestamp, "invalid unlock");
         _grantRole(DEFAULT_ADMIN_ROLE, admin_);
         _grantRole(ADMIN_ROLE, admin_);
         fundingCap = fundingCap_;
         minDeposit = minDeposit_;
-        unlockTime = unlockTime_;
+        
     }
 
     function deposit(uint256 assets, address receiver)
@@ -82,7 +91,7 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         nonReentrant
         returns (uint256 shares)
     {
-        require(block.timestamp >= unlockTime, "locked");
+        
         return super.withdraw(assets, receiver, owner);
     }
 
@@ -96,19 +105,28 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         nonReentrant
         returns (uint256 assets)
     {
-        require(block.timestamp >= unlockTime, "locked");
+        
         return super.redeem(shares, receiver, owner);
     }
 
-
-    function timeLeftToUnlock() external view returns (uint256) {
-        return block.timestamp >= unlockTime ? 0 : unlockTime - block.timestamp;
-    }
-
-    
     function rescueTokens(address token, uint256 amount) external onlyRole(ADMIN_ROLE) {
         require(token != address(asset()), "no rescue underlying");
         IERC20(token).transfer(msg.sender, amount);
+    }
+
+    function transferOwnership(address newUser) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(newUser != address(0), "Invalid admin address");
+        require(newUser != admin, "Already the admin");
+        
+        address prevAdmin = admin;
+        _revokeRole(DEFAULT_ADMIN_ROLE, prevAdmin);
+        _revokeRole(ADMIN_ROLE, prevAdmin);
+        
+        admin = newUser;
+        _grantRole(DEFAULT_ADMIN_ROLE, newUser);
+        _grantRole(ADMIN_ROLE, newUser);
+        
+        emit OwnerChanged(prevAdmin, newUser);
     }
 
     function _feedFunds(uint256 _amount, address _from) internal returns(bool){
@@ -140,7 +158,7 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
             uint256 shares = userDetails[_to].investments[i].allocatedShares;
             uint256 price = sharePriceHistory[i].pricePerShare;
 
-            (,uint256 ROI) = Math.tryMul(shares, price);
+            (uint256 ROI) = Math.tryMul(shares, price);
 
             claimable = claimable + ROI;
 
@@ -148,3 +166,5 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         
     }
 }
+
+

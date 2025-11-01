@@ -15,6 +15,7 @@ contract CampaignFactory is AccessControl {
         address creator;
         uint256 createdAt;
         string label;
+
     }
 
     
@@ -22,8 +23,10 @@ contract CampaignFactory is AccessControl {
 
     
     address[] public allCampaigns;
+    address public admin;
 
     event CampaignCreated(uint256 indexed campaignId, address indexed campaignAddress, address indexed creator, string label, uint256 createdAt);
+    event OwnerChanged(address prevAdmin,address newUser);
 
     constructor(address admin) {
         require(admin != address(0), "zero admin");
@@ -37,23 +40,29 @@ contract CampaignFactory is AccessControl {
         IERC20 asset,
         string memory name,
         string memory symbol,
-        uint256 fundingCap,
+        uint256 roitype,
+        uint256 goal,
         uint256 minDeposit,
-        uint256 unlockTime,
-        string calldata label
+        uint256 startdate,
+        uint256 enddate,
+        uint256 tokenprice
+        
     ) external returns (uint256 campaignId, address campaignAddr) {
         require(address(asset) != address(0), "zero asset");
-        require(unlockTime > block.timestamp, "invalid unlock");
+    
 
     
         CampaignVault campaign = new CampaignVault(
             asset,
             name,
             symbol,
-            msg.sender,    
-            fundingCap,
+            roitype,    
+            goal,
             minDeposit,
-            unlockTime
+            startdate,
+            enddate,
+            tokenprice
+            
         );
 
         campaignAddr = address(campaign);
@@ -77,6 +86,23 @@ contract CampaignFactory is AccessControl {
         return allCampaigns.length;
     }
 
+    function transferOwnership(address newUser) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(newUser != address(0), "Invalid admin address");
+        require(newUser != admin, "Already the admin");
+        
+        address prevAdmin = admin;
+        _revokeRole(DEFAULT_ADMIN_ROLE, prevAdmin);
+        _revokeRole(ADMIN_ROLE, prevAdmin);
+        
+        admin = newUser;
+        _grantRole(DEFAULT_ADMIN_ROLE, newUser);
+        _grantRole(ADMIN_ROLE, newUser);
+        
+        emit OwnerChanged(prevAdmin, newUser);
+    }
+
+    
+
     function getCampaignAddress(uint256 id) external view returns (address) {
         return campaigns[id].campaignAddress;
     }
@@ -90,3 +116,5 @@ contract CampaignFactory is AccessControl {
         campaigns[id].label = newLabel;
     }
 }
+
+
