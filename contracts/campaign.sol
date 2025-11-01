@@ -56,6 +56,8 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
 
     uint256 constant SCALE = 1e18;
 
+    uint256 private FUNDS_ALLOCATED_FOR_DIVIDEND;
+
     mapping(uint32 => sharePrice) internal sharePriceHistory;
     mapping(address => userDetail) internal userDetails;
     mapping(address => bool) public isKycVerified;
@@ -134,6 +136,11 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         emit OwnerChanged(prevAdmin, newUser);
     }
 
+        /// @inheritdoc IERC4626
+    function totalAssets() public view virtual override  returns (uint256) {
+        return (IERC20(asset()).balanceOf(address(this)) - FUNDS_ALLOCATED_FOR_DIVIDEND);
+    }
+
     function feedFunds(uint256 _amount, address _from) external onlyRole(ADMIN_ROLE) returns(bool){
         require(_amount > 0, "ROI: invalid amount");
         SafeERC20.safeTransferFrom(IERC20(asset()), _from, address(this), _amount);
@@ -143,6 +150,7 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
             price,
             block.timestamp
         );
+        FUNDS_ALLOCATED_FOR_DIVIDEND = FUNDS_ALLOCATED_FOR_DIVIDEND + _amount;
         emit FUNDSAdded(_amount, feedCount, block.timestamp);
         return true;
     }
@@ -209,3 +217,8 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         return claimable;
     }
 }
+
+
+
+
+
