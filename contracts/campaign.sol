@@ -29,44 +29,49 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         uint256 lastclaimTimestamp;
     }
 
+    enum PayoutType { CapitalAppreciation, Dividends, Both }
+
+    struct deployParams {
+        address admin;
+        string  _name;
+        string _symbol;
+        IERC20 asset;
+        uint256 goal;
+        uint256 _minInvestment;
+        uint256 _maxInvestment;
+        uint256 _startTime;
+        uint256 _endTime;
+        uint256 _tokenPrice;
+        PayoutType _payoutType;
+        uint16 _investmentFeeBps;
+        uint16 _payoutFeeBps;
+    }
+
     uint256 public fundingCap;       
     uint256 public minDeposit;              
     uint16 private feedCount = 0;
-    enum PayoutType { CapitalAppreciation, Dividends, Both }
     PayoutType public payoutType;
     uint256 public tokenPrice;
     address public admin;
 
-    mapping(uint16 => sharePrice) internal sharePriceHistory;
+    uint256 constant SCALE = 1e18;
+
+    mapping(uint32 => sharePrice) internal sharePriceHistory;
     mapping(address => userDetail) internal userDetails;
     mapping(address => bool) public isKycVerified;
-
     
     event FUNDSAdded(uint256 amount, uint256 index, uint256 time);
     event OwnerChanged(address prevAdmin, address newUser);
 
 
     constructor(
-        address admin,
-        string memory _name,
-        string memory _symbol,
-        uint256 _goal,
-        uint256 _minInvestment,
-        uint256 _maxInvestment,
-        uint256 _startTime,
-        uint256 _endTime,
-        uint256 _tokenPrice,
-        PayoutType _payoutType,
-        Milestone[] memory _milestones,
-        uint16 _investmentFeeBps,
-        uint16 _payoutFeeBps
-        
-    ) ERC20(name_, symbol_) ERC4626(asset_) {
-        require(admin_ != address(0), "zero admin");
-        _grantRole(DEFAULT_ADMIN_ROLE, admin_);
-        _grantRole(ADMIN_ROLE, admin_);
-        fundingCap = fundingCap_;
-        minDeposit = minDeposit_;
+        deployParams memory params
+    ) ERC20(params._name, params._symbol) ERC4626(IERC20(params.asset)) {
+        require(admin != address(0), "zero admin");
+        _grantRole(DEFAULT_ADMIN_ROLE, params.admin);
+        _grantRole(ADMIN_ROLE, params.admin);
+        fundingCap = params.goal;
+        minDeposit = params._minInvestment;
         
     }
 
@@ -129,11 +134,11 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         emit OwnerChanged(prevAdmin, newUser);
     }
 
-    function _feedFunds(uint256 _amount, address _from) internal returns(bool){
+    function feedFunds(uint256 _amount, address _from) external onlyRole(ADMIN_ROLE) returns(bool){
         require(_amount > 0, "ROI: invalid amount");
         SafeERC20.safeTransferFrom(IERC20(asset()), _from, address(this), _amount);
         feedCount = feedCount + 1;
-        (,uint256 price) = Math.tryDiv(totalAssets(), _amount);
+        uint256 price =(_amount * SCALE) / totalSupply();
         sharePriceHistory[feedCount] = sharePrice(
             price,
             block.timestamp
@@ -142,29 +147,65 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         return true;
     }
 
-    function _ROIclaim(address _to) internal {
-        // require(block.timestamp > _lastclaim + 30 days, "ROI: no dues are pending");
 
-        uint16 Index = userDetails[_to].lastclaimedIndex + uint16(1);
-        uint256 _claimableAmount  = _calculateROI(Index, _to);
-        SafeERC20.safeTransfer(IERC20(asset()), _to, _claimableAmount);
+    function claim() internal {
+        if (payoutType == PayoutType.CapitalAppreciation) {
+            //send the investment amount + dividend
+        }
+
+        if(payoutType == PayoutType.Dividends) {
+            ROIclaim();
+        }
+        if (payoutType == PayoutType.Both) {
+            //check the campaign whether matured or not
+            // if(){
+            // if yes send the investment amount + dividend
+            // }else {
+            //     ROIclaim()
+            // }
+        }
+
     }
 
 
-    function _calculateROI(uint16 Index, address _to) internal view returns(uint256 claimable){
+    function ROIclaim() internal {
+        address userAddr = msg.sender;
+        uint32 startIndex = userDetails[userAddr].lastclaimedIndex + 1;
+        uint256 claimable = _calculateROI(userAddr, startIndex);
+        require(claimable > 0, "No ROI available");
+        SafeERC20.safeTransfer(IERC20(asset()), userAddr, claimable);
+        userDetails[userAddr].lastclaimedIndex = feedCount;
+        userDetails[userAddr].lastclaimTimestamp = block.timestamp;
+    }
 
-        for (uint16 i = Index; i <= feedCount; i++) 
-        {
-            uint256 shares = userDetails[_to].investments[i].allocatedShares;
-            uint256 price = sharePriceHistory[i].pricePerShare;
+    function _calculateROI(address userAddr, uint32 startIndex) internal view returns (uint256) {
+        userDetail storage user = userDetails[userAddr];
+        uint256 totalClaimable = 0;
 
-            (uint256 ROI) = Math.tryMul(shares, price);
-
-            claimable = claimable + ROI;
-
+        for (uint32 i = startIndex; i <= feedCount; i++) {
+            sharePrice storage sp = sharePriceHistory[i];
+            totalClaimable += _calculateForEachInvestment(user, sp.pricePerShare, sp.date);
         }
-        
+
+        return totalClaimable;
+    }
+
+    function _calculateForEachInvestment(
+        userDetail storage user,
+        uint256 price,
+        uint256 timestamp
+    ) internal view returns (uint256) {
+        uint256 claimable = 0;
+        uint256 len = user.investments.length;
+
+        for (uint256 j = 0; j < len; j++) {
+            investmentDetail storage inv = user.investments[j];
+            if (inv.timeStamp < timestamp) {
+                unchecked {
+                    claimable += (inv.allocatedShares * price) / 1e18;
+                }
+            }
+        }
+        return claimable;
     }
 }
-
-
