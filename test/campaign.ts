@@ -15,27 +15,60 @@ describe("Purchase Contract", function () {
   const symbol = "AUMFINT";
   const fundingGoal = ethers.parseEther("1000");
   const minContribution = ethers.parseEther("1");
-  const unlockTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30; // 30 days
+  const _maxInvestment = ethers.parseEther("1000");
+  const _startTime =  Date.now();
+  const _endTime =Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
+  const _tokenPrice = ethers.parseEther("0.1");
+  const _payoutType = 0;
+  const maturityTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
+  const interestPermile = 500;
 
   before(async () => {
     owner = await ethers.provider.getSigner(0);
     admin = await ethers.provider.getSigner(1);
     addr1 = await ethers.provider.getSigner(2);
     addr2 = await ethers.provider.getSigner(3);
+
+    const ownerAddress = await owner.getAddress();
+    console.log(ownerAddress)
+
     // --- Deploy Token ---
     // pass constructor arguments as an array to deployContract
   // token constructor: (string name_, string symbol_, address admin)
   token = await ethers.deployContract("AumFinBEPToken", [name, symbol, await admin.getAddress()]);
     // --- Deploy Campaign ---
     // pass all constructor args as an array
+
+        //     address admin;
+        // string  _name;
+        // string _symbol;
+        // IERC20 asset;
+        // uint256 goal;
+        // uint256 _minInvestment;
+        // uint256 _maxInvestment;
+        // uint256 _startTime;
+        // uint256 _endTime;
+        // uint256 _tokenPrice;
+        // PayoutType _payoutType;
+        // uint256 maturityTime;
+        // uint256 interestPermile;
+    console.log(_tokenPrice);
     campaign = await ethers.deployContract("CampaignVault", [
-      token.target,
+      [
+      await owner.getAddress(),
       name,
       symbol,
-      await admin.getAddress(),
+      token.target,
       fundingGoal,
       minContribution,
-      unlockTime,
+      _maxInvestment,
+      _startTime,
+      _endTime,
+      _tokenPrice,
+      _payoutType,
+      maturityTime,
+      interestPermile
+      ]
     ]);
 
     // --- Assign Roles ---
@@ -72,6 +105,8 @@ describe("Purchase Contract", function () {
 
       //make contribution
       let contribute_tx = await campaign.connect(addr1).deposit(contributionAmount, await addr1.getAddress());
+      let balance = await campaign.balanceOf(await addr1.getAddress());
+      console.log(balance);
       await contribute_tx.wait();
     });
   });

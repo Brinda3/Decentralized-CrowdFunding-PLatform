@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "./struct.sol";
 
 contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -29,30 +30,22 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         uint256 lastclaimTimestamp;
     }
 
-    enum PayoutType { CapitalAppreciation, Dividends, Both }
 
-    struct deployParams {
-        address admin;
-        string  _name;
-        string _symbol;
-        IERC20 asset;
-        uint256 goal;
-        uint256 _minInvestment;
-        uint256 _maxInvestment;
-        uint256 _startTime;
-        uint256 _endTime;
-        uint256 _tokenPrice;
-        PayoutType _payoutType;
-        uint16 _investmentFeeBps;
-        uint16 _payoutFeeBps;
-    }
-
-    uint256 public fundingCap;       
-    uint256 public minDeposit;              
+    uint256 public FUNDING_CAP;       
+    uint256 public MIN_DEPOSIT;
+    uint256 public MAX_DEPOSIT;            
     uint16 private feedCount = 0;
-    PayoutType public payoutType;
-    uint256 public tokenPrice;
+    Structs.PayoutType public PAYOUT_TYPE;
+    uint256 public TOKEN_PRICE;
     address public admin;
+    uint256 public STARTTIME;
+    uint256 public ENDTIME;
+    uint256 public MATURITY_TIME;
+    uint256 public MATURITY_INTREST_PERMILE;
+    uint256 public DEPOSIT_FEE_PERMILE = 250; 
+    uint256 public WITHDRAW_FEE_PERMILE = 250;
+
+    uint256 TOTAL_INVESTMENTS = 0;
 
     uint256 constant SCALE = 1e18;
 
@@ -60,22 +53,48 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
 
     mapping(uint32 => sharePrice) internal sharePriceHistory;
     mapping(address => userDetail) internal userDetails;
-    mapping(address => bool) public isKycVerified;
     
     event FUNDSAdded(uint256 amount, uint256 index, uint256 time);
     event OwnerChanged(address prevAdmin, address newUser);
 
+    error INVWINDOWNOTCLOSED();
+
+    modifier onlyInvClosed() {
+        if(block.timestamp < ENDTIME || TOTAL_INVESTMENTS == FUNDING_CAP) {
+            revert INVWINDOWNOTCLOSED();
+        }
+        _;
+    }
+
 
     constructor(
-        deployParams memory params
+        Structs.deployParams memory params
     ) ERC20(params._name, params._symbol) ERC4626(IERC20(params.asset)) {
-        require(admin != address(0), "zero admin");
+        require(params.admin != address(0), "zero admin");
         _grantRole(DEFAULT_ADMIN_ROLE, params.admin);
         _grantRole(ADMIN_ROLE, params.admin);
-        fundingCap = params.goal;
-        minDeposit = params._minInvestment;
+        admin = params.admin;
+        FUNDING_CAP= params.goal;
+        MIN_DEPOSIT = params._minInvestment;
+        MAX_DEPOSIT = params._maxInvestment;
+        TOKEN_PRICE = params._tokenPrice;
+        STARTTIME = params._startTime;
+        ENDTIME = params._endTime;
+        MATURITY_TIME = params.maturityTime;
+        MATURITY_INTREST_PERMILE = params.interestPermile;
+        PAYOUT_TYPE = params._payoutType;
         
     }
+
+    function getUserDetails(address user) public view returns(userDetail memory) {
+        return userDetails[user];
+    }
+
+        /// @inheritdoc IERC4626
+    function maxDeposit(address) public view virtual override returns (uint256) {
+        return MAX_DEPOSIT;
+    }
+
 
     function deposit(uint256 assets, address receiver)
         public
@@ -83,8 +102,21 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         nonReentrant
         returns (uint256 shares)
     {
-        require(assets >= minDeposit, "below min");
-        require(totalAssets() + assets <= fundingCap, "cap exceeded");
+        uint256 _fee = Math.mulDiv(assets, DEPOSIT_FEE_PERMILE, 1e4, Math.Rounding.Floor);
+        assets = assets - _fee;
+        require(assets > MIN_DEPOSIT, "minimum deposit required");
+        require(TOTAL_INVESTMENTS + assets <= FUNDING_CAP, "cap exceeded");
+        TOTAL_INVESTMENTS = TOTAL_INVESTMENTS + assets;
+        uint256 _alllocShares = _convertToShares(assets, Math.Rounding.Floor);
+        userDetails[msg.sender].investments.push(investmentDetail(
+            assets,
+            _alllocShares,
+            block.timestamp
+        )
+        );
+
+        userDetails[msg.sender].totalAllocatedShares = userDetails[msg.sender].totalAllocatedShares + _alllocShares;
+        SafeERC20.safeTransferFrom(IERC20(asset()), msg.sender, admin, _fee);
         return super.deposit(assets, receiver);
     }
  
@@ -98,7 +130,11 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         nonReentrant
         returns (uint256 shares)
     {
-        
+        uint256 _fee = Math.mulDiv(assets, WITHDRAW_FEE_PERMILE, 1e4,Math.Rounding.Floor);
+        assets = assets - _fee;
+        uint256 _shares = _convertToShares(assets, Math.Rounding.Floor);
+        userDetails[msg.sender].totalAllocatedShares = userDetails[msg.sender].totalAllocatedShares - _shares;
+        SafeERC20.safeTransfer(IERC20(asset()), admin, _fee);
         return super.withdraw(assets, receiver, owner);
     }
 
@@ -112,7 +148,8 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         nonReentrant
         returns (uint256 assets)
     {
-        
+
+        userDetails[msg.sender].totalAllocatedShares = userDetails[msg.sender].totalAllocatedShares - shares;
         return super.redeem(shares, receiver, owner);
     }
 
@@ -136,7 +173,7 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         emit OwnerChanged(prevAdmin, newUser);
     }
 
-        /// @inheritdoc IERC4626
+    /// @inheritdoc IERC4626
     function totalAssets() public view virtual override  returns (uint256) {
         return (IERC20(asset()).balanceOf(address(this)) - FUNDS_ALLOCATED_FOR_DIVIDEND);
     }
@@ -156,29 +193,48 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     }
 
 
-    function claim() internal {
-        if (payoutType == PayoutType.CapitalAppreciation) {
-            //send the investment amount + dividend
+    function claim() external onlyInvClosed() {
+        if (PAYOUT_TYPE == Structs.PayoutType.CapitalAppreciation && block.timestamp > MATURITY_TIME) {
+            maturityClaim();
         }
 
-        if(payoutType == PayoutType.Dividends) {
+        if(PAYOUT_TYPE == Structs.PayoutType.Dividends) {
             ROIclaim();
         }
-        if (payoutType == PayoutType.Both) {
-            //check the campaign whether matured or not
-            // if(){
-            // if yes send the investment amount + dividend
-            // }else {
-            //     ROIclaim()
-            // }
+        if (PAYOUT_TYPE == Structs.PayoutType.Both) {
+            if(block.timestamp > MATURITY_TIME){
+                maturityClaim();
+            }else {
+                ROIclaim();
+            }
         }
 
     }
 
+    function maturityClaim() internal {
+        address userAddr = msg.sender;
+        uint256 claimable = _calculateMaturityROI(userAddr);
+        require(claimable > 0, "No ROI available");
+        withdraw(userDetails[userAddr].totalAllocatedShares, userAddr, userAddr);
+        userDetails[userAddr].totalAllocatedShares = 0;
+        SafeERC20.safeTransfer(IERC20(asset()), userAddr, claimable);
+    }
+
+
+    function _calculateMaturityROI(address userAddr) internal view returns (uint256) {
+        userDetail storage user = userDetails[userAddr];
+        uint256 totalClaimable = 0;
+            unchecked {
+                totalClaimable += (user.totalAllocatedShares * MATURITY_INTREST_PERMILE) / 1e4;
+            }
+        return totalClaimable;
+    }
 
     function ROIclaim() internal {
+        require(feedCount > 0, "No ROI deposit available");
         address userAddr = msg.sender;
         uint32 startIndex = userDetails[userAddr].lastclaimedIndex + 1;
+        require(startIndex < feedCount, "Claim not available");
         uint256 claimable = _calculateROI(userAddr, startIndex);
         require(claimable > 0, "No ROI available");
         SafeERC20.safeTransfer(IERC20(asset()), userAddr, claimable);
@@ -192,29 +248,50 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
 
         for (uint32 i = startIndex; i <= feedCount; i++) {
             sharePrice storage sp = sharePriceHistory[i];
-            totalClaimable += _calculateForEachInvestment(user, sp.pricePerShare, sp.date);
+                unchecked {
+                     totalClaimable += (user.totalAllocatedShares * sp.pricePerShare) / 1e18;
+                }
         }
 
         return totalClaimable;
     }
 
-    function _calculateForEachInvestment(
-        userDetail storage user,
-        uint256 price,
-        uint256 timestamp
-    ) internal view returns (uint256) {
-        uint256 claimable = 0;
-        uint256 len = user.investments.length;
+    /**
+     * @dev Internal conversion function (from assets to shares) with support for rounding direction.
+     */
+    function _convertToShares(uint256 assets, Math.Rounding rounding) internal view virtual override returns (uint256) {
+            return Math.mulDiv(assets, 1e18, TOKEN_PRICE, rounding); }
+    /**
+     * @dev Internal conversion function (from shares to assets) with support for rounding direction.
+     */
+    function _convertToAssets(uint256 shares, Math.Rounding rounding) internal view virtual override returns (uint256) {
+        return Math.mulDiv(shares, TOKEN_PRICE, 1e18, rounding); 
+    }
 
-        for (uint256 j = 0; j < len; j++) {
-            investmentDetail storage inv = user.investments[j];
-            if (inv.timeStamp < timestamp) {
-                unchecked {
-                    claimable += (inv.allocatedShares * price) / 1e18;
-                }
-            }
+    function _withdraw(
+        address caller,
+        address receiver,
+        address owner,
+        uint256 assets,
+        uint256 shares
+    ) internal virtual override {
+        if (caller != owner) {
+            _spendAllowance(owner, caller, shares);
         }
-        return claimable;
+
+        // If asset() is ERC-777, `transfer` can trigger a reentrancy AFTER the transfer happens through the
+        // `tokensReceived` hook. On the other hand, the `tokensToSend` hook, that is triggered before the transfer,
+        // calls the vault, which is assumed not malicious.
+        //
+        // Conclusion: we need to do the transfer after the burn so that any reentrancy would happen after the
+        // shares are burned and after the assets are transferred, which is a valid state.
+        _burn(owner, shares);
+        uint256 _fee = Math.mulDiv(assets, WITHDRAW_FEE_PERMILE, 1e4,Math.Rounding.Floor);
+        assets = assets - _fee;
+        SafeERC20.safeTransfer(IERC20(asset()), admin, _fee);
+        SafeERC20.safeTransfer(IERC20(asset()), receiver, assets);
+
+        emit Withdraw(caller, receiver, owner, assets, shares);
     }
 }
 

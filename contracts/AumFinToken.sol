@@ -6,17 +6,12 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract AumFinBEPToken is ERC20, AccessControl {
+contract BUSDMock is ERC20, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     constructor(string memory name_, string memory symbol_, address admin) ERC20(name_, symbol_) {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
-        _mint(admin, 10000000000000 * 10 ** decimals());
-    }
-
-    function mint(address to, uint256 amount) external {
-        require(hasRole(MINTER_ROLE, msg.sender), "ProjectToken: not minter");
-        _mint(to, amount);
+        _mint(admin, 100000000000000000 * 10 ** decimals());
     }
 }
 

@@ -1,10 +1,20 @@
 import type { HardhatUserConfig } from "hardhat/config";
+import hardhatVerify from "@nomicfoundation/hardhat-verify";
 
 import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 import { configVariable } from "hardhat/config";
 
 const config: HardhatUserConfig = {
-  plugins: [hardhatToolboxMochaEthersPlugin],
+  plugins: [hardhatToolboxMochaEthersPlugin,    hardhatVerify,
+],
+    verify: {
+          blockscout: {
+      enabled: false,
+    },
+    etherscan: {
+      apiKey: "Q6VCHDYPPATQHPS4CR3AUUQ41ARAMSXZA4",
+    },
+  },
   solidity: {
     profiles: {
       default: {
@@ -21,6 +31,18 @@ const config: HardhatUserConfig = {
       },
     },
   },
+      chainDescriptors: 
+    {
+      97:{
+      name: "Bsctestnet",
+blockExplorers: {
+        etherscan: {
+          name: "etherscan",
+          url: "https://testnet.bsccscan.com",
+          apiUrl: "https://api.etherscan.io/v2/api",
+        },
+    }}
+  },
   networks: {
     hardhatMainnet: {
       type: "edr-simulated",
@@ -30,11 +52,11 @@ const config: HardhatUserConfig = {
       type: "edr-simulated",
       chainType: "op",
     },
-    sepolia: {
+    BscTestnet: {
       type: "http",
       chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: "https://bnb-testnet.g.alchemy.com/v2/3BH10F7T5x3xp5eOUF9vhTnu7MIv7yz_",
+      accounts: [""],
     },
   },
 };

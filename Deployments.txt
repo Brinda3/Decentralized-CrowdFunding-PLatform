@@ -1,0 +1,11 @@
+  
+  Amfin V1 deployemnt:
+
+  
+  "RWAdeployV1#BUSDMock": "0x021e725F7457391f62cB0c04E5F939F27B086eB9",
+  "RWAdeployV1#CampaignFactory": "0x127dfC1A499379981D65466fF3B7bd7AB5Edd120",
+  "RWAdeployV1#CampaignVault": "0x3966033fc6403711828196a9414E15246b871F7b"
+
+  Admin:
+
+  AdminKey: 
