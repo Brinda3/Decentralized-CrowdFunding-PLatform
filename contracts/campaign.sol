@@ -56,6 +56,7 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     
     event FUNDSAdded(uint256 amount, uint256 index, uint256 time);
     event OwnerChanged(address prevAdmin, address newUser);
+    event withdrawnFunds(uint256 indexed amount);
 
     error INVWINDOWNOTCLOSED();
 
@@ -89,6 +90,16 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     function getUserDetails(address user) public view returns(userDetail memory) {
         return userDetails[user];
     }
+   
+
+    function getROI(address user) public view returns(uint256) {
+        uint32 startIndex = userDetails[user].lastclaimedIndex + 1;
+        return _calculateROI(user,startIndex);
+    }
+
+    function getmaturityROI(address user) public view returns(uint256){
+        return _calculateMaturityROI(user);
+    } 
 
         /// @inheritdoc IERC4626
     function maxDeposit(address) public view virtual override returns (uint256) {
@@ -176,6 +187,12 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
     /// @inheritdoc IERC4626
     function totalAssets() public view virtual override  returns (uint256) {
         return (IERC20(asset()).balanceOf(address(this)) - FUNDS_ALLOCATED_FOR_DIVIDEND);
+    }
+
+    function withdrawFunds(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) onlyInvClosed(){
+        require(amount > 0,"Withdraw:amount should be greater than zero");
+        SafeERC20.safeTransfer(IERC20(asset()), admin, amount);
+
     }
 
     function feedFunds(uint256 _amount, address _from) external onlyRole(ADMIN_ROLE) returns(bool){

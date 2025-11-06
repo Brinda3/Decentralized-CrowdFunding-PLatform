@@ -6,6 +6,7 @@
   "RWAdeployV1#CampaignFactory": "0x127dfC1A499379981D65466fF3B7bd7AB5Edd120",
   "RWAdeployV1#CampaignVault": "0x3966033fc6403711828196a9414E15246b871F7b"
 
-  Admin:
+  Admin: 0x5886b456782534bfa0ad2523724daa06436ef49a
 
-  AdminKey: 
+  AdminKey: 49a89d4df3127a1739192e0c55b06f34fb8c0897749cf089997791d011be3dc6
+  
