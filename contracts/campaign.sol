@@ -6,10 +6,20 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "./struct.sol";
 
-contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
+contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard,Pausable {
+
+    error INVALIDSIGNATURE();
+    error EXPIRED(uint256 time); 
+
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    address public signAuthority;
+    using ECDSA for bytes32;
+    using MessageHashUtils for bytes32;
 
     struct sharePrice {
         uint256 pricePerShare;
@@ -28,6 +38,21 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         uint256 totalAllocatedShares;
         uint16 lastclaimedIndex;
         uint256 lastclaimTimestamp;
+    }
+
+    struct Sign {
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+        uint256 nonce;
+        uint256 deadline;
+    }
+
+    modifier isExpired(uint256 time) {
+        if(block.timestamp > time) {
+            revert EXPIRED(time);
+        }
+        _;
     }
 
 
@@ -227,6 +252,32 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard {
         }
 
     }
+
+
+
+    function verifySign(
+        address token,
+        uint256 fee,
+        address caller,
+        Sign calldata sign
+
+    ) internal view isExpired(sign.deadline) {
+        
+        bytes32 messageHash = keccak256(
+            abi.encodePacked(this, caller, token, fee, block.chainid, sign.nonce)
+        );
+        
+        bytes32 ethSignedMessageHash = messageHash.toEthSignedMessageHash();
+        
+        
+        address recovered = ethSignedMessageHash.recover(sign.v, sign.r, sign.s);
+        
+    
+        if (recovered != signAuthority) {
+            revert INVALIDSIGNATURE();
+        }
+    }
+
 
     function maturityClaim() internal {
         address userAddr = msg.sender;
