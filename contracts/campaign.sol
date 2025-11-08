@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "./struct.sol";
+import "./utils/struct.sol";
 
 contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard,Pausable {
 

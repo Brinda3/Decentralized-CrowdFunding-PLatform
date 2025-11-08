@@ -3,7 +3,7 @@ pragma solidity ^0.8.22;
 
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract campaignProxy is TransparentUpgradeableProxy, AccessControl, ReentrancyGuard {
 

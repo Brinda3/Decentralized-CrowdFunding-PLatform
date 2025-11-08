@@ -10,7 +10,7 @@ library Structs {
 
     struct deployParams {
         address admin;
-        address signer
+        address signer;
         string  _name;
         string _symbol;
         IERC20 asset;
