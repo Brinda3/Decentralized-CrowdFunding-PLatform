@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { Block } from "ethers";
 import hre from "hardhat";
 import { network } from "hardhat";
 const { ethers } = await network.connect();
@@ -16,11 +17,11 @@ describe("Purchase Contract", function () {
   const fundingGoal = ethers.parseEther("1000");
   const minContribution = ethers.parseEther("1");
   const _maxInvestment = ethers.parseEther("1000");
-  const _startTime =  Date.now();
-  const _endTime =Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
+  const _startTime =  Math.floor(Date.now() / 1000);
+  const _endTime =  Math.floor(Date.now() / 1000) + 1 * 60 * 60;;
   const _tokenPrice = ethers.parseEther("0.1");
   const _payoutType = 0;
-  const maturityTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
+  const maturityTime =  Math.floor(Date.now() / 1000) + 2 * 60 * 60;;
   const interestPermile = 500;
 
   before(async () => {
@@ -35,7 +36,7 @@ describe("Purchase Contract", function () {
     // --- Deploy Token ---
     // pass constructor arguments as an array to deployContract
   // token constructor: (string name_, string symbol_, address admin)
-  token = await ethers.deployContract("AumFinBEPToken", [name, symbol, await admin.getAddress()]);
+  token = await ethers.deployContract("BUSDMock", [name, symbol, await admin.getAddress()]);
     // --- Deploy Campaign ---
     // pass all constructor args as an array
 
@@ -55,6 +56,7 @@ describe("Purchase Contract", function () {
     console.log(_tokenPrice);
     campaign = await ethers.deployContract("CampaignVault", [
       [
+      await owner.getAddress(),
       await owner.getAddress(),
       name,
       symbol,
@@ -78,13 +80,12 @@ describe("Purchase Contract", function () {
     console.log("Token Address:", token.target);
     console.log("Campaign Address:",  campaign.target);
   });
-
   it("should deploy contracts successfully", async () => {
     expect(await token.getAddress()).to.be.properAddress;
     expect(await campaign.getAddress()).to.be.properAddress;
   });
 
-  describe("Campaign Contributions", function () {
+  describe("Campaign Contributions - crypto", function () {
     it("should accept contributions", async () => {
       const contributionAmount = ethers.parseEther("10");
 
@@ -108,6 +109,76 @@ describe("Purchase Contract", function () {
       let balance = await campaign.balanceOf(await addr1.getAddress());
       console.log(balance);
       await contribute_tx.wait();
+    });
+  });
+
+    describe("Campaign Contributions - fiat", function () {
+    it("should accept contributions", async () => {
+      const contributionAmount = ethers.parseEther("10");
+      const fee = (contributionAmount * 25n) / 1000n; // 25% fee
+
+
+      const getSign = async () => {
+        let nonce = 1;
+        let deadline = Math.floor(Date.now() / 1000) + 5 * 60; // 1 hour from now
+        const messageHash = ethers.keccak256(
+          ethers.AbiCoder.defaultAbiCoder().encode(
+            [
+              "address",
+              "address",
+              "address",
+              "uint256",
+              "uint256",
+              "uint256",
+              "uint256"
+            ],
+            [
+              campaign.target,
+              await addr2.getAddress(),
+              token.target,
+              contributionAmount,
+              fee,
+              await ethers.provider.getNetwork().then(n => n.chainId),
+              nonce
+            ]
+          )
+        );
+
+        const ethSignedMessageHash = ethers.hashMessage(ethers.getBytes(messageHash));
+
+        const signature = await owner.signMessage(ethers.getBytes(messageHash));
+        let signArry =  [
+          ethers.Signature.from(signature).v,
+          ethers.Signature.from(signature).r,
+          ethers.Signature.from(signature).s,
+          nonce,
+          deadline
+        ]
+        return signArry;
+      }
+      const sign =  await getSign();
+      console.log(sign);
+
+      //transfer tokens to addr1
+      let mint_tx = await token.connect(admin).transfer(await addr2.getAddress(), contributionAmount);
+      await mint_tx.wait();
+
+      expect(await token.balanceOf(await addr2.getAddress())).to.equal(contributionAmount);
+
+      //token approval
+      let approve_tx = await token.connect(addr2).approve(campaign.target, contributionAmount);
+      await approve_tx.wait();
+
+      let allowance = await token.allowance(await addr2.getAddress(), campaign.target);
+
+      expect(allowance).to.equal(contributionAmount);
+
+
+      // //make contribution
+      let contribute_tx = await campaign.connect(addr2).depositWithSign(contributionAmount, sign);
+      await contribute_tx.wait();
+      let balance = await campaign.balanceOf(await addr2.getAddress());
+      console.log(balance);
     });
   });
   
