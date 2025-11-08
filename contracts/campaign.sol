@@ -410,6 +410,8 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard, Pausable {
         userDetails[receiver].totalAllocatedShares += shares;
         TOTAL_INVESTMENTS += assetsAfterFee;
 
+        emit Deposit(receiver, receiver, assetsAfterFee, shares);
+
         return shares;
     }
 
