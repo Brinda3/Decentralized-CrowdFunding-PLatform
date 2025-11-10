@@ -19,6 +19,13 @@ const config: HardhatUserConfig = {
     profiles: {
       default: {
         version: "0.8.30",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+          evmVersion: "prague",
+        },
       },
       production: {
         version: "0.8.30",
@@ -27,6 +34,7 @@ const config: HardhatUserConfig = {
             enabled: true,
             runs: 200,
           },
+          evmVersion: "prague",
         },
       },
     },
@@ -38,8 +46,8 @@ const config: HardhatUserConfig = {
 blockExplorers: {
         etherscan: {
           name: "etherscan",
-          url: "https://testnet.bsccscan.com",
-          apiUrl: "https://api.etherscan.io/v2/api",
+          "url": "https://testnet.bscscan.com/",
+          "apiUrl": "https://api.etherscan.io/v2/api",
         },
     }}
   },
@@ -56,7 +64,7 @@ blockExplorers: {
       type: "http",
       chainType: "l1",
       url: "https://bnb-testnet.g.alchemy.com/v2/3BH10F7T5x3xp5eOUF9vhTnu7MIv7yz_",
-      accounts: [""],
+      accounts: ["59a11c1e0a6920454ead747645b571eb8caefda94c2eeecec92922b3cd79002b"],
     },
   },
 };
