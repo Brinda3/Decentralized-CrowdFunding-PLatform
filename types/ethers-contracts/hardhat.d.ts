@@ -10,21 +10,29 @@ import * as Contracts from "./index.js";
 
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
-  getContractFactory(name: 'AumFinBEPToken', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.AumFinBEPToken__factory>
-getContractFactory(name: 'CampaignVault', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.CampaignVault__factory>
+  getContractFactory(name: 'BUSDMock', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.BUSDMock__factory>
+getContractFactory(name: 'CampaignProxy', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.CampaignProxy__factory>
 getContractFactory(name: 'CampaignFactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.CampaignFactory__factory>
+getContractFactory(name: 'CampaignFactoryProxy', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.CampaignFactoryProxy__factory>
+getContractFactory(name: 'CampaignVault', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.CampaignVault__factory>
 
-  getContractAt(name: 'AumFinBEPToken', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.AumFinBEPToken>
-getContractAt(name: 'CampaignVault', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.CampaignVault>
+  getContractAt(name: 'BUSDMock', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.BUSDMock>
+getContractAt(name: 'CampaignProxy', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.CampaignProxy>
 getContractAt(name: 'CampaignFactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.CampaignFactory>
+getContractAt(name: 'CampaignFactoryProxy', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.CampaignFactoryProxy>
+getContractAt(name: 'CampaignVault', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.CampaignVault>
 
-  deployContract(name: 'AumFinBEPToken', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.AumFinBEPToken>
-deployContract(name: 'CampaignVault', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignVault>
+  deployContract(name: 'BUSDMock', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BUSDMock>
+deployContract(name: 'CampaignProxy', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignProxy>
 deployContract(name: 'CampaignFactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignFactory>
+deployContract(name: 'CampaignFactoryProxy', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignFactoryProxy>
+deployContract(name: 'CampaignVault', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignVault>
 
-  deployContract(name: 'AumFinBEPToken', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.AumFinBEPToken>
-deployContract(name: 'CampaignVault', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignVault>
+  deployContract(name: 'BUSDMock', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BUSDMock>
+deployContract(name: 'CampaignProxy', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignProxy>
 deployContract(name: 'CampaignFactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignFactory>
+deployContract(name: 'CampaignFactoryProxy', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignFactoryProxy>
+deployContract(name: 'CampaignVault', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignVault>
 
     // default types
     getContractFactory(

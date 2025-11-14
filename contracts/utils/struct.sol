@@ -22,7 +22,8 @@ library Structs {
         uint256 _tokenPrice;
         PayoutType _payoutType;
         uint256 maturityTime;
-        uint256 interestPermile;
+        uint256 capitalAppreciationPermile;
+        uint256 maxDividendsCount;
     }
 
 }

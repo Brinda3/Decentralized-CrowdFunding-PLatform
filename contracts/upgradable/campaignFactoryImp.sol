@@ -69,7 +69,7 @@ contract CampaignFactory is
 /**
      * @notice Deploy a new ERC-4337 SimpleAccount deterministically using CREATE2.
      */
-    function createAccount(Structs.deployParams calldata params, uint256 salt)
+    function createCampaign(Structs.deployParams calldata params, uint256 salt)
         external
         nonReentrant
         whenNotPaused
