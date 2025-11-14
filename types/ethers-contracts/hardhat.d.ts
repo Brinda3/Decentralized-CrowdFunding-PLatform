@@ -10,19 +10,19 @@ import * as Contracts from "./index.js";
 
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
-  getContractFactory(name: 'AumFinBEPToken', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.AumFinBEPToken__factory>
+  getContractFactory(name: 'BUSDMock', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.BUSDMock__factory>
 getContractFactory(name: 'CampaignVault', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.CampaignVault__factory>
 getContractFactory(name: 'CampaignFactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.CampaignFactory__factory>
 
-  getContractAt(name: 'AumFinBEPToken', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.AumFinBEPToken>
+  getContractAt(name: 'BUSDMock', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.BUSDMock>
 getContractAt(name: 'CampaignVault', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.CampaignVault>
 getContractAt(name: 'CampaignFactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.CampaignFactory>
 
-  deployContract(name: 'AumFinBEPToken', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.AumFinBEPToken>
+  deployContract(name: 'BUSDMock', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BUSDMock>
 deployContract(name: 'CampaignVault', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignVault>
 deployContract(name: 'CampaignFactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignFactory>
 
-  deployContract(name: 'AumFinBEPToken', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.AumFinBEPToken>
+  deployContract(name: 'BUSDMock', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BUSDMock>
 deployContract(name: 'CampaignVault', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignVault>
 deployContract(name: 'CampaignFactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignFactory>
 

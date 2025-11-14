@@ -391,7 +391,12 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard, Pausable {
         uint256 _fee = Math.mulDiv(assets, DEPOSIT_FEE_PERMILE, 1e4, Math.Rounding.Floor);
         uint256 assetsAfterFee = assets - _fee;
 
-        if (assetsAfterFee < MIN_DEPOSIT) revert MINIMUMDEPOSITREQUIRED();
+        if (assetsAfterFee < MIN_DEPOSIT) {
+            // Only allow a small deposit if it perfectly fills the fund
+            if (TOTAL_INVESTMENTS + assetsAfterFee != FUNDING_CAP) {
+                revert MINIMUMDEPOSITREQUIRED();
+            }
+        }        
         if (TOTAL_INVESTMENTS + assetsAfterFee > FUNDING_CAP) revert CAPEXCEEDED();
 
         // Transfer fee to admin using SafeERC20 (only if fee > 0 and admin is valid)
@@ -447,14 +452,6 @@ contract CampaignVault is ERC4626, AccessControl, ReentrancyGuard, Pausable {
         }
 
         uint256 _allocShares = _convertToShares(assetsAfterFee, Math.Rounding.Floor);
-
-        // Transfer using SafeERC20 (only if amounts > 0)
-        if (assetsAfterFee > 0) {
-            IERC20(asset()).safeTransferFrom(receiver, address(this), assetsAfterFee);
-        }
-        if (_fee > 0 && admin != address(0)) {
-            IERC20(asset()).safeTransferFrom(receiver, admin, _fee);
-        }
 
         // Update state after successful transfers and minting
         _mint(receiver, _allocShares);

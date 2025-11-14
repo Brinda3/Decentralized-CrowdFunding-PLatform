@@ -4,71 +4,54 @@
 import type { BaseContract, BigNumberish, BytesLike, FunctionFragment, Result, Interface, EventFragment, AddressLike, ContractRunner, ContractMethod, Listener } from "ethers"
 import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, TypedLogDescription, TypedListener, TypedContractMethod } from "../common.js"
   
-export declare namespace Structs {
-      
-    export type DeployParamsStruct = {admin: AddressLike, signer: AddressLike, _name: string, _symbol: string, asset: AddressLike, goal: BigNumberish, _minInvestment: BigNumberish, _maxInvestment: BigNumberish, _startTime: BigNumberish, _endTime: BigNumberish, _tokenPrice: BigNumberish, _payoutType: BigNumberish, maturityTime: BigNumberish, interestPermile: BigNumberish}
 
-    export type DeployParamsStructOutput = [admin: string, signer: string, _name: string, _symbol: string, asset: string, goal: bigint, _minInvestment: bigint, _maxInvestment: bigint, _startTime: bigint, _endTime: bigint, _tokenPrice: bigint, _payoutType: bigint, maturityTime: bigint, interestPermile: bigint] & {admin: string, signer: string, _name: string, _symbol: string, asset: string, goal: bigint, _minInvestment: bigint, _maxInvestment: bigint, _startTime: bigint, _endTime: bigint, _tokenPrice: bigint, _payoutType: bigint, maturityTime: bigint, interestPermile: bigint }
-  
-    }
+  export interface BUSDMockInterface extends Interface {
+    getFunction(nameOrSignature: "DEFAULT_ADMIN_ROLE" | "MINTER_ROLE" | "allowance" | "approve" | "balanceOf" | "decimals" | "getRoleAdmin" | "grantRole" | "hasRole" | "name" | "renounceRole" | "revokeRole" | "supportsInterface" | "symbol" | "totalSupply" | "transfer" | "transferFrom"): FunctionFragment;
 
-  export interface CampaignFactoryInterface extends Interface {
-    getFunction(nameOrSignature: "ADMIN_ROLE" | "Admin" | "DEFAULT_ADMIN_ROLE" | "allCampaigns" | "campaigns" | "createCampaign" | "getCampaignAddress" | "getRoleAdmin" | "grantRole" | "hasRole" | "nextCampaignId" | "renounceRole" | "revokeRole" | "supportsInterface" | "totalCampaigns" | "transferOwnership"): FunctionFragment;
+    getEvent(nameOrSignatureOrTopic: "Approval" | "RoleAdminChanged" | "RoleGranted" | "RoleRevoked" | "Transfer"): EventFragment;
 
-    getEvent(nameOrSignatureOrTopic: "CampaignCreated" | "OwnerChanged" | "RoleAdminChanged" | "RoleGranted" | "RoleRevoked"): EventFragment;
-
-    encodeFunctionData(functionFragment: 'ADMIN_ROLE', values?: undefined): string;
-encodeFunctionData(functionFragment: 'Admin', values?: undefined): string;
-encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
-encodeFunctionData(functionFragment: 'allCampaigns', values: [BigNumberish]): string;
-encodeFunctionData(functionFragment: 'campaigns', values: [BigNumberish]): string;
-encodeFunctionData(functionFragment: 'createCampaign', values: [Structs.DeployParamsStruct]): string;
-encodeFunctionData(functionFragment: 'getCampaignAddress', values: [BigNumberish]): string;
+    encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'MINTER_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'allowance', values: [AddressLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'approve', values: [AddressLike, BigNumberish]): string;
+encodeFunctionData(functionFragment: 'balanceOf', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'decimals', values?: undefined): string;
 encodeFunctionData(functionFragment: 'getRoleAdmin', values: [BytesLike]): string;
 encodeFunctionData(functionFragment: 'grantRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'hasRole', values: [BytesLike, AddressLike]): string;
-encodeFunctionData(functionFragment: 'nextCampaignId', values?: undefined): string;
+encodeFunctionData(functionFragment: 'name', values?: undefined): string;
 encodeFunctionData(functionFragment: 'renounceRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'revokeRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string;
-encodeFunctionData(functionFragment: 'totalCampaigns', values?: undefined): string;
-encodeFunctionData(functionFragment: 'transferOwnership', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'symbol', values?: undefined): string;
+encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string;
+encodeFunctionData(functionFragment: 'transfer', values: [AddressLike, BigNumberish]): string;
+encodeFunctionData(functionFragment: 'transferFrom', values: [AddressLike, AddressLike, BigNumberish]): string;
 
-    decodeFunctionResult(functionFragment: 'ADMIN_ROLE', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'Admin', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'allCampaigns', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'campaigns', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'createCampaign', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'getCampaignAddress', data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'MINTER_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'allowance', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'decimals', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getRoleAdmin', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'grantRole', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'hasRole', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'nextCampaignId', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'renounceRole', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'revokeRole', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'totalCampaigns', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'totalSupply', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'transfer', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'transferFrom', data: BytesLike): Result;
   }
 
   
-    export namespace CampaignCreatedEvent {
-      export type InputTuple = [campaignId: BigNumberish, campaignAddress: AddressLike, creator: AddressLike, createdAt: BigNumberish];
-      export type OutputTuple = [campaignId: bigint, campaignAddress: string, creator: string, createdAt: bigint];
-      export interface OutputObject {campaignId: bigint, campaignAddress: string, creator: string, createdAt: bigint };
-      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
-      export type Filter = TypedDeferredTopicFilter<Event>
-      export type Log = TypedEventLog<Event>
-      export type LogDescription = TypedLogDescription<Event>
-    }
-
-  
-
-    export namespace OwnerChangedEvent {
-      export type InputTuple = [prevAdmin: AddressLike, newUser: AddressLike];
-      export type OutputTuple = [prevAdmin: string, newUser: string];
-      export interface OutputObject {prevAdmin: string, newUser: string };
+    export namespace ApprovalEvent {
+      export type InputTuple = [owner: AddressLike, spender: AddressLike, value: BigNumberish];
+      export type OutputTuple = [owner: string, spender: string, value: bigint];
+      export interface OutputObject {owner: string, spender: string, value: bigint };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -113,12 +96,24 @@ decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Re
 
   
 
-  export interface CampaignFactory extends BaseContract {
+    export namespace TransferEvent {
+      export type InputTuple = [from: AddressLike, to: AddressLike, value: BigNumberish];
+      export type OutputTuple = [from: string, to: string, value: bigint];
+      export interface OutputObject {from: string, to: string, value: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+  export interface BUSDMock extends BaseContract {
     
-    connect(runner?: ContractRunner | null): CampaignFactory;
+    connect(runner?: ContractRunner | null): BUSDMock;
     waitForDeployment(): Promise<this>;
 
-    interface: CampaignFactoryInterface;
+    interface: BUSDMockInterface;
 
     
   queryFilter<TCEvent extends TypedContractEvent>(
@@ -147,22 +142,6 @@ decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Re
 
     
     
-    ADMIN_ROLE: TypedContractMethod<
-      [],
-      [string],
-      'view'
-    >
-    
-
-    
-    Admin: TypedContractMethod<
-      [],
-      [string],
-      'view'
-    >
-    
-
-    
     DEFAULT_ADMIN_ROLE: TypedContractMethod<
       [],
       [string],
@@ -171,33 +150,41 @@ decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Re
     
 
     
-    allCampaigns: TypedContractMethod<
-      [arg0: BigNumberish, ],
+    MINTER_ROLE: TypedContractMethod<
+      [],
       [string],
       'view'
     >
     
 
     
-    campaigns: TypedContractMethod<
-      [arg0: BigNumberish, ],
-      [string],
+    allowance: TypedContractMethod<
+      [owner: AddressLike, spender: AddressLike, ],
+      [bigint],
       'view'
     >
     
 
     
-    createCampaign: TypedContractMethod<
-      [params: Structs.DeployParamsStruct, ],
-      [[bigint, string] & {campaignId: bigint, campaignAddr: string }],
+    approve: TypedContractMethod<
+      [spender: AddressLike, value: BigNumberish, ],
+      [boolean],
       'nonpayable'
     >
     
 
     
-    getCampaignAddress: TypedContractMethod<
-      [id: BigNumberish, ],
-      [string],
+    balanceOf: TypedContractMethod<
+      [account: AddressLike, ],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    decimals: TypedContractMethod<
+      [],
+      [bigint],
       'view'
     >
     
@@ -227,9 +214,9 @@ decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Re
     
 
     
-    nextCampaignId: TypedContractMethod<
+    name: TypedContractMethod<
       [],
-      [bigint],
+      [string],
       'view'
     >
     
@@ -259,7 +246,15 @@ decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Re
     
 
     
-    totalCampaigns: TypedContractMethod<
+    symbol: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
+    totalSupply: TypedContractMethod<
       [],
       [bigint],
       'view'
@@ -267,9 +262,17 @@ decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Re
     
 
     
-    transferOwnership: TypedContractMethod<
-      [newUser: AddressLike, ],
-      [void],
+    transfer: TypedContractMethod<
+      [to: AddressLike, value: BigNumberish, ],
+      [boolean],
+      'nonpayable'
+    >
+    
+
+    
+    transferFrom: TypedContractMethod<
+      [from: AddressLike, to: AddressLike, value: BigNumberish, ],
+      [boolean],
       'nonpayable'
     >
     
@@ -277,39 +280,34 @@ decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Re
 
     getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
 
-    getFunction(nameOrSignature: 'ADMIN_ROLE'): TypedContractMethod<
+    getFunction(nameOrSignature: 'DEFAULT_ADMIN_ROLE'): TypedContractMethod<
       [],
       [string],
       'view'
     >;
-getFunction(nameOrSignature: 'Admin'): TypedContractMethod<
+getFunction(nameOrSignature: 'MINTER_ROLE'): TypedContractMethod<
       [],
       [string],
       'view'
     >;
-getFunction(nameOrSignature: 'DEFAULT_ADMIN_ROLE'): TypedContractMethod<
-      [],
-      [string],
+getFunction(nameOrSignature: 'allowance'): TypedContractMethod<
+      [owner: AddressLike, spender: AddressLike, ],
+      [bigint],
       'view'
     >;
-getFunction(nameOrSignature: 'allCampaigns'): TypedContractMethod<
-      [arg0: BigNumberish, ],
-      [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'campaigns'): TypedContractMethod<
-      [arg0: BigNumberish, ],
-      [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'createCampaign'): TypedContractMethod<
-      [params: Structs.DeployParamsStruct, ],
-      [[bigint, string] & {campaignId: bigint, campaignAddr: string }],
+getFunction(nameOrSignature: 'approve'): TypedContractMethod<
+      [spender: AddressLike, value: BigNumberish, ],
+      [boolean],
       'nonpayable'
     >;
-getFunction(nameOrSignature: 'getCampaignAddress'): TypedContractMethod<
-      [id: BigNumberish, ],
-      [string],
+getFunction(nameOrSignature: 'balanceOf'): TypedContractMethod<
+      [account: AddressLike, ],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'decimals'): TypedContractMethod<
+      [],
+      [bigint],
       'view'
     >;
 getFunction(nameOrSignature: 'getRoleAdmin'): TypedContractMethod<
@@ -327,9 +325,9 @@ getFunction(nameOrSignature: 'hasRole'): TypedContractMethod<
       [boolean],
       'view'
     >;
-getFunction(nameOrSignature: 'nextCampaignId'): TypedContractMethod<
+getFunction(nameOrSignature: 'name'): TypedContractMethod<
       [],
-      [bigint],
+      [string],
       'view'
     >;
 getFunction(nameOrSignature: 'renounceRole'): TypedContractMethod<
@@ -347,31 +345,37 @@ getFunction(nameOrSignature: 'supportsInterface'): TypedContractMethod<
       [boolean],
       'view'
     >;
-getFunction(nameOrSignature: 'totalCampaigns'): TypedContractMethod<
+getFunction(nameOrSignature: 'symbol'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'totalSupply'): TypedContractMethod<
       [],
       [bigint],
       'view'
     >;
-getFunction(nameOrSignature: 'transferOwnership'): TypedContractMethod<
-      [newUser: AddressLike, ],
-      [void],
+getFunction(nameOrSignature: 'transfer'): TypedContractMethod<
+      [to: AddressLike, value: BigNumberish, ],
+      [boolean],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'transferFrom'): TypedContractMethod<
+      [from: AddressLike, to: AddressLike, value: BigNumberish, ],
+      [boolean],
       'nonpayable'
     >;
 
-    getEvent(key: 'CampaignCreated'): TypedContractEvent<CampaignCreatedEvent.InputTuple, CampaignCreatedEvent.OutputTuple, CampaignCreatedEvent.OutputObject>;
-getEvent(key: 'OwnerChanged'): TypedContractEvent<OwnerChangedEvent.InputTuple, OwnerChangedEvent.OutputTuple, OwnerChangedEvent.OutputObject>;
+    getEvent(key: 'Approval'): TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
 getEvent(key: 'RoleAdminChanged'): TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
 getEvent(key: 'RoleGranted'): TypedContractEvent<RoleGrantedEvent.InputTuple, RoleGrantedEvent.OutputTuple, RoleGrantedEvent.OutputObject>;
 getEvent(key: 'RoleRevoked'): TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
+getEvent(key: 'Transfer'): TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
 
     filters: {
       
-      'CampaignCreated(uint256,address,address,uint256)': TypedContractEvent<CampaignCreatedEvent.InputTuple, CampaignCreatedEvent.OutputTuple, CampaignCreatedEvent.OutputObject>;
-      CampaignCreated: TypedContractEvent<CampaignCreatedEvent.InputTuple, CampaignCreatedEvent.OutputTuple, CampaignCreatedEvent.OutputObject>;
-    
-
-      'OwnerChanged(address,address)': TypedContractEvent<OwnerChangedEvent.InputTuple, OwnerChangedEvent.OutputTuple, OwnerChangedEvent.OutputObject>;
-      OwnerChanged: TypedContractEvent<OwnerChangedEvent.InputTuple, OwnerChangedEvent.OutputTuple, OwnerChangedEvent.OutputObject>;
+      'Approval(address,address,uint256)': TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
+      Approval: TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
     
 
       'RoleAdminChanged(bytes32,bytes32,bytes32)': TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
@@ -384,6 +388,10 @@ getEvent(key: 'RoleRevoked'): TypedContractEvent<RoleRevokedEvent.InputTuple, Ro
 
       'RoleRevoked(bytes32,address,address)': TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
       RoleRevoked: TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
+    
+
+      'Transfer(address,address,uint256)': TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
+      Transfer: TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
     
     };
   }

@@ -4,36 +4,76 @@
 import type { BaseContract, BigNumberish, BytesLike, FunctionFragment, Result, Interface, EventFragment, AddressLike, ContractRunner, ContractMethod, Listener } from "ethers"
 import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, TypedLogDescription, TypedListener, TypedContractMethod } from "../common.js"
   
+export declare namespace Structs {
+      
+    export type DeployParamsStruct = {admin: AddressLike, signer: AddressLike, _name: string, _symbol: string, asset: AddressLike, goal: BigNumberish, _minInvestment: BigNumberish, _maxInvestment: BigNumberish, _startTime: BigNumberish, _endTime: BigNumberish, _tokenPrice: BigNumberish, _payoutType: BigNumberish, maturityTime: BigNumberish, interestPermile: BigNumberish}
+
+    export type DeployParamsStructOutput = [admin: string, signer: string, _name: string, _symbol: string, asset: string, goal: bigint, _minInvestment: bigint, _maxInvestment: bigint, _startTime: bigint, _endTime: bigint, _tokenPrice: bigint, _payoutType: bigint, maturityTime: bigint, interestPermile: bigint] & {admin: string, signer: string, _name: string, _symbol: string, asset: string, goal: bigint, _minInvestment: bigint, _maxInvestment: bigint, _startTime: bigint, _endTime: bigint, _tokenPrice: bigint, _payoutType: bigint, maturityTime: bigint, interestPermile: bigint }
+  
+    }
+
+export declare namespace CampaignVault {
+      
+    export type SignStruct = {v: BigNumberish, r: BytesLike, s: BytesLike, nonce: BigNumberish, deadline: BigNumberish}
+
+    export type SignStructOutput = [v: bigint, r: string, s: string, nonce: bigint, deadline: bigint] & {v: bigint, r: string, s: string, nonce: bigint, deadline: bigint }
+  
+
+    export type InvestmentDetailStruct = {amount: BigNumberish, allocatedShares: BigNumberish, timeStamp: BigNumberish}
+
+    export type InvestmentDetailStructOutput = [amount: bigint, allocatedShares: bigint, timeStamp: bigint] & {amount: bigint, allocatedShares: bigint, timeStamp: bigint }
+  
+
+    export type UserDetailStruct = {investments: CampaignVault.InvestmentDetailStruct[], totalAllocatedShares: BigNumberish, lastclaimedIndex: BigNumberish, lastclaimTimestamp: BigNumberish}
+
+    export type UserDetailStructOutput = [investments: CampaignVault.InvestmentDetailStructOutput[], totalAllocatedShares: bigint, lastclaimedIndex: bigint, lastclaimTimestamp: bigint] & {investments: CampaignVault.InvestmentDetailStructOutput[], totalAllocatedShares: bigint, lastclaimedIndex: bigint, lastclaimTimestamp: bigint }
+  
+    }
 
   export interface CampaignVaultInterface extends Interface {
-    getFunction(nameOrSignature: "ADMIN_ROLE" | "DEFAULT_ADMIN_ROLE" | "addYield" | "allowance" | "approve" | "asset" | "balanceOf" | "convertToAssets" | "convertToShares" | "decimals" | "deposit" | "escrowaddress" | "fundingCap" | "getRoleAdmin" | "grantRole" | "hasRole" | "isKycVerified" | "maxDeposit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "minDeposit" | "mint" | "name" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "renounceRole" | "rescueTokens" | "revokeRole" | "supportsInterface" | "symbol" | "timeLeftToUnlock" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unlockTime" | "withdraw"): FunctionFragment;
+    getFunction(nameOrSignature: "DEFAULT_ADMIN_ROLE" | "DEPOSIT_FEE_PERMILE" | "ENDTIME" | "FUNDING_CAP" | "MATURITY_INTEREST_PERMILE" | "MATURITY_TIME" | "MAX_DEPOSIT" | "MIN_DEPOSIT" | "PAYOUT_TYPE" | "STARTTIME" | "TOKEN_PRICE" | "TOTAL_INVESTMENTS" | "WITHDRAW_FEE_PERMILE" | "admin" | "allowance" | "approve" | "asset" | "balanceOf" | "claim" | "convertToAssets" | "convertToShares" | "decimals" | "deposit" | "depositWithSign" | "feedFunds" | "getROI" | "getRoleAdmin" | "getUserDetails" | "getmaturityROI" | "grantRole" | "hasRole" | "maxDeposit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "renounceRole" | "rescueTokens" | "revokeRole" | "signAuthority" | "supportsInterface" | "symbol" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "transferOwnership" | "unpause" | "withdraw" | "withdrawFunds"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "Approval" | "Deposit" | "RoleAdminChanged" | "RoleGranted" | "RoleRevoked" | "Transfer" | "Withdraw" | "YieldAdded"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Approval" | "Deposit" | "FUNDSAdded" | "OwnerChanged" | "Paused" | "RoleAdminChanged" | "RoleGranted" | "RoleRevoked" | "Transfer" | "Unpaused" | "Withdraw" | "withdrawnFunds"): EventFragment;
 
-    encodeFunctionData(functionFragment: 'ADMIN_ROLE', values?: undefined): string;
-encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
-encodeFunctionData(functionFragment: 'addYield', values: [BigNumberish]): string;
+    encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'DEPOSIT_FEE_PERMILE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'ENDTIME', values?: undefined): string;
+encodeFunctionData(functionFragment: 'FUNDING_CAP', values?: undefined): string;
+encodeFunctionData(functionFragment: 'MATURITY_INTEREST_PERMILE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'MATURITY_TIME', values?: undefined): string;
+encodeFunctionData(functionFragment: 'MAX_DEPOSIT', values?: undefined): string;
+encodeFunctionData(functionFragment: 'MIN_DEPOSIT', values?: undefined): string;
+encodeFunctionData(functionFragment: 'PAYOUT_TYPE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'STARTTIME', values?: undefined): string;
+encodeFunctionData(functionFragment: 'TOKEN_PRICE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'TOTAL_INVESTMENTS', values?: undefined): string;
+encodeFunctionData(functionFragment: 'WITHDRAW_FEE_PERMILE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'admin', values?: undefined): string;
 encodeFunctionData(functionFragment: 'allowance', values: [AddressLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'approve', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'asset', values?: undefined): string;
 encodeFunctionData(functionFragment: 'balanceOf', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'claim', values?: undefined): string;
 encodeFunctionData(functionFragment: 'convertToAssets', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'convertToShares', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'decimals', values?: undefined): string;
 encodeFunctionData(functionFragment: 'deposit', values: [BigNumberish, AddressLike]): string;
-encodeFunctionData(functionFragment: 'escrowaddress', values?: undefined): string;
-encodeFunctionData(functionFragment: 'fundingCap', values?: undefined): string;
+encodeFunctionData(functionFragment: 'depositWithSign', values: [BigNumberish, CampaignVault.SignStruct]): string;
+encodeFunctionData(functionFragment: 'feedFunds', values: [BigNumberish, AddressLike]): string;
+encodeFunctionData(functionFragment: 'getROI', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'getRoleAdmin', values: [BytesLike]): string;
+encodeFunctionData(functionFragment: 'getUserDetails', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'getmaturityROI', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'grantRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'hasRole', values: [BytesLike, AddressLike]): string;
-encodeFunctionData(functionFragment: 'isKycVerified', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'maxDeposit', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'maxMint', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'maxRedeem', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'maxWithdraw', values: [AddressLike]): string;
-encodeFunctionData(functionFragment: 'minDeposit', values?: undefined): string;
 encodeFunctionData(functionFragment: 'mint', values: [BigNumberish, AddressLike]): string;
 encodeFunctionData(functionFragment: 'name', values?: undefined): string;
+encodeFunctionData(functionFragment: 'pause', values?: undefined): string;
+encodeFunctionData(functionFragment: 'paused', values?: undefined): string;
 encodeFunctionData(functionFragment: 'previewDeposit', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'previewMint', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'previewRedeem', values: [BigNumberish]): string;
@@ -42,40 +82,57 @@ encodeFunctionData(functionFragment: 'redeem', values: [BigNumberish, AddressLik
 encodeFunctionData(functionFragment: 'renounceRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'rescueTokens', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'revokeRole', values: [BytesLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'signAuthority', values?: undefined): string;
 encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string;
 encodeFunctionData(functionFragment: 'symbol', values?: undefined): string;
-encodeFunctionData(functionFragment: 'timeLeftToUnlock', values?: undefined): string;
 encodeFunctionData(functionFragment: 'totalAssets', values?: undefined): string;
 encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string;
 encodeFunctionData(functionFragment: 'transfer', values: [AddressLike, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'transferFrom', values: [AddressLike, AddressLike, BigNumberish]): string;
-encodeFunctionData(functionFragment: 'unlockTime', values?: undefined): string;
+encodeFunctionData(functionFragment: 'transferOwnership', values: [AddressLike]): string;
+encodeFunctionData(functionFragment: 'unpause', values?: undefined): string;
 encodeFunctionData(functionFragment: 'withdraw', values: [BigNumberish, AddressLike, AddressLike]): string;
+encodeFunctionData(functionFragment: 'withdrawFunds', values: [BigNumberish]): string;
 
-    decodeFunctionResult(functionFragment: 'ADMIN_ROLE', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'addYield', data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'DEPOSIT_FEE_PERMILE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'ENDTIME', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'FUNDING_CAP', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'MATURITY_INTEREST_PERMILE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'MATURITY_TIME', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'MAX_DEPOSIT', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'MIN_DEPOSIT', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'PAYOUT_TYPE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'STARTTIME', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'TOKEN_PRICE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'TOTAL_INVESTMENTS', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'WITHDRAW_FEE_PERMILE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'admin', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'allowance', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'asset', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'claim', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'convertToAssets', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'convertToShares', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'decimals', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'deposit', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'escrowaddress', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'fundingCap', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'depositWithSign', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'feedFunds', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getROI', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getRoleAdmin', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getUserDetails', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getmaturityROI', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'grantRole', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'hasRole', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'isKycVerified', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'maxDeposit', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'maxMint', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'maxRedeem', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'maxWithdraw', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'minDeposit', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'mint', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'previewDeposit', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'previewMint', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'previewRedeem', data: BytesLike): Result;
@@ -84,15 +141,17 @@ decodeFunctionResult(functionFragment: 'redeem', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'renounceRole', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'rescueTokens', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'revokeRole', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'signAuthority', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'timeLeftToUnlock', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'totalAssets', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'totalSupply', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'transfer', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'transferFrom', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'unlockTime', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'withdrawFunds', data: BytesLike): Result;
   }
 
   
@@ -112,6 +171,42 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
       export type InputTuple = [sender: AddressLike, owner: AddressLike, assets: BigNumberish, shares: BigNumberish];
       export type OutputTuple = [sender: string, owner: string, assets: bigint, shares: bigint];
       export interface OutputObject {sender: string, owner: string, assets: bigint, shares: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace FUNDSAddedEvent {
+      export type InputTuple = [amount: BigNumberish, index: BigNumberish, time: BigNumberish];
+      export type OutputTuple = [amount: bigint, index: bigint, time: bigint];
+      export interface OutputObject {amount: bigint, index: bigint, time: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace OwnerChangedEvent {
+      export type InputTuple = [prevAdmin: AddressLike, newUser: AddressLike];
+      export type OutputTuple = [prevAdmin: string, newUser: string];
+      export interface OutputObject {prevAdmin: string, newUser: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace PausedEvent {
+      export type InputTuple = [account: AddressLike];
+      export type OutputTuple = [account: string];
+      export interface OutputObject {account: string };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -168,6 +263,18 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
   
 
+    export namespace UnpausedEvent {
+      export type InputTuple = [account: AddressLike];
+      export type OutputTuple = [account: string];
+      export interface OutputObject {account: string };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
     export namespace WithdrawEvent {
       export type InputTuple = [sender: AddressLike, receiver: AddressLike, owner: AddressLike, assets: BigNumberish, shares: BigNumberish];
       export type OutputTuple = [sender: string, receiver: string, owner: string, assets: bigint, shares: bigint];
@@ -180,10 +287,10 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
   
 
-    export namespace YieldAddedEvent {
-      export type InputTuple = [amount: BigNumberish, timestamp: BigNumberish];
-      export type OutputTuple = [amount: bigint, timestamp: bigint];
-      export interface OutputObject {amount: bigint, timestamp: bigint };
+    export namespace withdrawnFundsEvent {
+      export type InputTuple = [amount: BigNumberish];
+      export type OutputTuple = [amount: bigint];
+      export interface OutputObject {amount: bigint };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -226,14 +333,6 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
 
     
     
-    ADMIN_ROLE: TypedContractMethod<
-      [],
-      [string],
-      'view'
-    >
-    
-
-    
     DEFAULT_ADMIN_ROLE: TypedContractMethod<
       [],
       [string],
@@ -242,10 +341,106 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
-    addYield: TypedContractMethod<
-      [amount: BigNumberish, ],
-      [void],
-      'nonpayable'
+    DEPOSIT_FEE_PERMILE: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    ENDTIME: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    FUNDING_CAP: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    MATURITY_INTEREST_PERMILE: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    MATURITY_TIME: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    MAX_DEPOSIT: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    MIN_DEPOSIT: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    PAYOUT_TYPE: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    STARTTIME: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    TOKEN_PRICE: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    TOTAL_INVESTMENTS: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    WITHDRAW_FEE_PERMILE: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    admin: TypedContractMethod<
+      [],
+      [string],
+      'view'
     >
     
 
@@ -282,6 +477,14 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
+    claim: TypedContractMethod<
+      [],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
     convertToAssets: TypedContractMethod<
       [shares: BigNumberish, ],
       [bigint],
@@ -314,16 +517,24 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
-    escrowaddress: TypedContractMethod<
-      [],
-      [string],
-      'view'
+    depositWithSign: TypedContractMethod<
+      [assets: BigNumberish, sign: CampaignVault.SignStruct, ],
+      [bigint],
+      'nonpayable'
     >
     
 
     
-    fundingCap: TypedContractMethod<
-      [],
+    feedFunds: TypedContractMethod<
+      [_amount: BigNumberish, _from: AddressLike, ],
+      [boolean],
+      'nonpayable'
+    >
+    
+
+    
+    getROI: TypedContractMethod<
+      [user: AddressLike, ],
       [bigint],
       'view'
     >
@@ -333,6 +544,22 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     getRoleAdmin: TypedContractMethod<
       [role: BytesLike, ],
       [string],
+      'view'
+    >
+    
+
+    
+    getUserDetails: TypedContractMethod<
+      [user: AddressLike, ],
+      [CampaignVault.UserDetailStructOutput],
+      'view'
+    >
+    
+
+    
+    getmaturityROI: TypedContractMethod<
+      [user: AddressLike, ],
+      [bigint],
       'view'
     >
     
@@ -348,14 +575,6 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
     hasRole: TypedContractMethod<
       [role: BytesLike, account: AddressLike, ],
-      [boolean],
-      'view'
-    >
-    
-
-    
-    isKycVerified: TypedContractMethod<
-      [arg0: AddressLike, ],
       [boolean],
       'view'
     >
@@ -394,14 +613,6 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
-    minDeposit: TypedContractMethod<
-      [],
-      [bigint],
-      'view'
-    >
-    
-
-    
     mint: TypedContractMethod<
       [shares: BigNumberish, receiver: AddressLike, ],
       [bigint],
@@ -413,6 +624,22 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     name: TypedContractMethod<
       [],
       [string],
+      'view'
+    >
+    
+
+    
+    pause: TypedContractMethod<
+      [],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    paused: TypedContractMethod<
+      [],
+      [boolean],
       'view'
     >
     
@@ -482,6 +709,14 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
+    signAuthority: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
     supportsInterface: TypedContractMethod<
       [interfaceId: BytesLike, ],
       [boolean],
@@ -493,14 +728,6 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     symbol: TypedContractMethod<
       [],
       [string],
-      'view'
-    >
-    
-
-    
-    timeLeftToUnlock: TypedContractMethod<
-      [],
-      [bigint],
       'view'
     >
     
@@ -538,10 +765,18 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     
 
     
-    unlockTime: TypedContractMethod<
+    transferOwnership: TypedContractMethod<
+      [newUser: AddressLike, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    unpause: TypedContractMethod<
       [],
-      [bigint],
-      'view'
+      [void],
+      'nonpayable'
     >
     
 
@@ -553,23 +788,86 @@ decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
     >
     
 
-
-    getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
-
-    getFunction(nameOrSignature: 'ADMIN_ROLE'): TypedContractMethod<
-      [],
-      [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'DEFAULT_ADMIN_ROLE'): TypedContractMethod<
-      [],
-      [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'addYield'): TypedContractMethod<
+    
+    withdrawFunds: TypedContractMethod<
       [amount: BigNumberish, ],
       [void],
       'nonpayable'
+    >
+    
+
+
+    getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
+
+    getFunction(nameOrSignature: 'DEFAULT_ADMIN_ROLE'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'DEPOSIT_FEE_PERMILE'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'ENDTIME'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'FUNDING_CAP'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'MATURITY_INTEREST_PERMILE'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'MATURITY_TIME'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'MAX_DEPOSIT'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'MIN_DEPOSIT'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'PAYOUT_TYPE'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'STARTTIME'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'TOKEN_PRICE'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'TOTAL_INVESTMENTS'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'WITHDRAW_FEE_PERMILE'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'admin'): TypedContractMethod<
+      [],
+      [string],
+      'view'
     >;
 getFunction(nameOrSignature: 'allowance'): TypedContractMethod<
       [owner: AddressLike, spender: AddressLike, ],
@@ -591,6 +889,11 @@ getFunction(nameOrSignature: 'balanceOf'): TypedContractMethod<
       [bigint],
       'view'
     >;
+getFunction(nameOrSignature: 'claim'): TypedContractMethod<
+      [],
+      [void],
+      'nonpayable'
+    >;
 getFunction(nameOrSignature: 'convertToAssets'): TypedContractMethod<
       [shares: BigNumberish, ],
       [bigint],
@@ -611,19 +914,34 @@ getFunction(nameOrSignature: 'deposit'): TypedContractMethod<
       [bigint],
       'nonpayable'
     >;
-getFunction(nameOrSignature: 'escrowaddress'): TypedContractMethod<
-      [],
-      [string],
-      'view'
+getFunction(nameOrSignature: 'depositWithSign'): TypedContractMethod<
+      [assets: BigNumberish, sign: CampaignVault.SignStruct, ],
+      [bigint],
+      'nonpayable'
     >;
-getFunction(nameOrSignature: 'fundingCap'): TypedContractMethod<
-      [],
+getFunction(nameOrSignature: 'feedFunds'): TypedContractMethod<
+      [_amount: BigNumberish, _from: AddressLike, ],
+      [boolean],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'getROI'): TypedContractMethod<
+      [user: AddressLike, ],
       [bigint],
       'view'
     >;
 getFunction(nameOrSignature: 'getRoleAdmin'): TypedContractMethod<
       [role: BytesLike, ],
       [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'getUserDetails'): TypedContractMethod<
+      [user: AddressLike, ],
+      [CampaignVault.UserDetailStructOutput],
+      'view'
+    >;
+getFunction(nameOrSignature: 'getmaturityROI'): TypedContractMethod<
+      [user: AddressLike, ],
+      [bigint],
       'view'
     >;
 getFunction(nameOrSignature: 'grantRole'): TypedContractMethod<
@@ -633,11 +951,6 @@ getFunction(nameOrSignature: 'grantRole'): TypedContractMethod<
     >;
 getFunction(nameOrSignature: 'hasRole'): TypedContractMethod<
       [role: BytesLike, account: AddressLike, ],
-      [boolean],
-      'view'
-    >;
-getFunction(nameOrSignature: 'isKycVerified'): TypedContractMethod<
-      [arg0: AddressLike, ],
       [boolean],
       'view'
     >;
@@ -661,11 +974,6 @@ getFunction(nameOrSignature: 'maxWithdraw'): TypedContractMethod<
       [bigint],
       'view'
     >;
-getFunction(nameOrSignature: 'minDeposit'): TypedContractMethod<
-      [],
-      [bigint],
-      'view'
-    >;
 getFunction(nameOrSignature: 'mint'): TypedContractMethod<
       [shares: BigNumberish, receiver: AddressLike, ],
       [bigint],
@@ -674,6 +982,16 @@ getFunction(nameOrSignature: 'mint'): TypedContractMethod<
 getFunction(nameOrSignature: 'name'): TypedContractMethod<
       [],
       [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'pause'): TypedContractMethod<
+      [],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'paused'): TypedContractMethod<
+      [],
+      [boolean],
       'view'
     >;
 getFunction(nameOrSignature: 'previewDeposit'): TypedContractMethod<
@@ -716,6 +1034,11 @@ getFunction(nameOrSignature: 'revokeRole'): TypedContractMethod<
       [void],
       'nonpayable'
     >;
+getFunction(nameOrSignature: 'signAuthority'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
 getFunction(nameOrSignature: 'supportsInterface'): TypedContractMethod<
       [interfaceId: BytesLike, ],
       [boolean],
@@ -724,11 +1047,6 @@ getFunction(nameOrSignature: 'supportsInterface'): TypedContractMethod<
 getFunction(nameOrSignature: 'symbol'): TypedContractMethod<
       [],
       [string],
-      'view'
-    >;
-getFunction(nameOrSignature: 'timeLeftToUnlock'): TypedContractMethod<
-      [],
-      [bigint],
       'view'
     >;
 getFunction(nameOrSignature: 'totalAssets'): TypedContractMethod<
@@ -751,25 +1069,39 @@ getFunction(nameOrSignature: 'transferFrom'): TypedContractMethod<
       [boolean],
       'nonpayable'
     >;
-getFunction(nameOrSignature: 'unlockTime'): TypedContractMethod<
+getFunction(nameOrSignature: 'transferOwnership'): TypedContractMethod<
+      [newUser: AddressLike, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'unpause'): TypedContractMethod<
       [],
-      [bigint],
-      'view'
+      [void],
+      'nonpayable'
     >;
 getFunction(nameOrSignature: 'withdraw'): TypedContractMethod<
       [assets: BigNumberish, receiver: AddressLike, owner: AddressLike, ],
       [bigint],
       'nonpayable'
     >;
+getFunction(nameOrSignature: 'withdrawFunds'): TypedContractMethod<
+      [amount: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >;
 
     getEvent(key: 'Approval'): TypedContractEvent<ApprovalEvent.InputTuple, ApprovalEvent.OutputTuple, ApprovalEvent.OutputObject>;
 getEvent(key: 'Deposit'): TypedContractEvent<DepositEvent.InputTuple, DepositEvent.OutputTuple, DepositEvent.OutputObject>;
+getEvent(key: 'FUNDSAdded'): TypedContractEvent<FUNDSAddedEvent.InputTuple, FUNDSAddedEvent.OutputTuple, FUNDSAddedEvent.OutputObject>;
+getEvent(key: 'OwnerChanged'): TypedContractEvent<OwnerChangedEvent.InputTuple, OwnerChangedEvent.OutputTuple, OwnerChangedEvent.OutputObject>;
+getEvent(key: 'Paused'): TypedContractEvent<PausedEvent.InputTuple, PausedEvent.OutputTuple, PausedEvent.OutputObject>;
 getEvent(key: 'RoleAdminChanged'): TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
 getEvent(key: 'RoleGranted'): TypedContractEvent<RoleGrantedEvent.InputTuple, RoleGrantedEvent.OutputTuple, RoleGrantedEvent.OutputObject>;
 getEvent(key: 'RoleRevoked'): TypedContractEvent<RoleRevokedEvent.InputTuple, RoleRevokedEvent.OutputTuple, RoleRevokedEvent.OutputObject>;
 getEvent(key: 'Transfer'): TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
+getEvent(key: 'Unpaused'): TypedContractEvent<UnpausedEvent.InputTuple, UnpausedEvent.OutputTuple, UnpausedEvent.OutputObject>;
 getEvent(key: 'Withdraw'): TypedContractEvent<WithdrawEvent.InputTuple, WithdrawEvent.OutputTuple, WithdrawEvent.OutputObject>;
-getEvent(key: 'YieldAdded'): TypedContractEvent<YieldAddedEvent.InputTuple, YieldAddedEvent.OutputTuple, YieldAddedEvent.OutputObject>;
+getEvent(key: 'withdrawnFunds'): TypedContractEvent<withdrawnFundsEvent.InputTuple, withdrawnFundsEvent.OutputTuple, withdrawnFundsEvent.OutputObject>;
 
     filters: {
       
@@ -779,6 +1111,18 @@ getEvent(key: 'YieldAdded'): TypedContractEvent<YieldAddedEvent.InputTuple, Yiel
 
       'Deposit(address,address,uint256,uint256)': TypedContractEvent<DepositEvent.InputTuple, DepositEvent.OutputTuple, DepositEvent.OutputObject>;
       Deposit: TypedContractEvent<DepositEvent.InputTuple, DepositEvent.OutputTuple, DepositEvent.OutputObject>;
+    
+
+      'FUNDSAdded(uint256,uint256,uint256)': TypedContractEvent<FUNDSAddedEvent.InputTuple, FUNDSAddedEvent.OutputTuple, FUNDSAddedEvent.OutputObject>;
+      FUNDSAdded: TypedContractEvent<FUNDSAddedEvent.InputTuple, FUNDSAddedEvent.OutputTuple, FUNDSAddedEvent.OutputObject>;
+    
+
+      'OwnerChanged(address,address)': TypedContractEvent<OwnerChangedEvent.InputTuple, OwnerChangedEvent.OutputTuple, OwnerChangedEvent.OutputObject>;
+      OwnerChanged: TypedContractEvent<OwnerChangedEvent.InputTuple, OwnerChangedEvent.OutputTuple, OwnerChangedEvent.OutputObject>;
+    
+
+      'Paused(address)': TypedContractEvent<PausedEvent.InputTuple, PausedEvent.OutputTuple, PausedEvent.OutputObject>;
+      Paused: TypedContractEvent<PausedEvent.InputTuple, PausedEvent.OutputTuple, PausedEvent.OutputObject>;
     
 
       'RoleAdminChanged(bytes32,bytes32,bytes32)': TypedContractEvent<RoleAdminChangedEvent.InputTuple, RoleAdminChangedEvent.OutputTuple, RoleAdminChangedEvent.OutputObject>;
@@ -797,12 +1141,16 @@ getEvent(key: 'YieldAdded'): TypedContractEvent<YieldAddedEvent.InputTuple, Yiel
       Transfer: TypedContractEvent<TransferEvent.InputTuple, TransferEvent.OutputTuple, TransferEvent.OutputObject>;
     
 
+      'Unpaused(address)': TypedContractEvent<UnpausedEvent.InputTuple, UnpausedEvent.OutputTuple, UnpausedEvent.OutputObject>;
+      Unpaused: TypedContractEvent<UnpausedEvent.InputTuple, UnpausedEvent.OutputTuple, UnpausedEvent.OutputObject>;
+    
+
       'Withdraw(address,address,address,uint256,uint256)': TypedContractEvent<WithdrawEvent.InputTuple, WithdrawEvent.OutputTuple, WithdrawEvent.OutputObject>;
       Withdraw: TypedContractEvent<WithdrawEvent.InputTuple, WithdrawEvent.OutputTuple, WithdrawEvent.OutputObject>;
     
 
-      'YieldAdded(uint256,uint256)': TypedContractEvent<YieldAddedEvent.InputTuple, YieldAddedEvent.OutputTuple, YieldAddedEvent.OutputObject>;
-      YieldAdded: TypedContractEvent<YieldAddedEvent.InputTuple, YieldAddedEvent.OutputTuple, YieldAddedEvent.OutputObject>;
+      'withdrawnFunds(uint256)': TypedContractEvent<withdrawnFundsEvent.InputTuple, withdrawnFundsEvent.OutputTuple, withdrawnFundsEvent.OutputObject>;
+      withdrawnFunds: TypedContractEvent<withdrawnFundsEvent.InputTuple, withdrawnFundsEvent.OutputTuple, withdrawnFundsEvent.OutputObject>;
     
     };
   }
