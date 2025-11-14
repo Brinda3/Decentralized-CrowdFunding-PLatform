@@ -51,13 +51,13 @@ blockExplorers: {
     hardhatOp: {
       type: "edr-simulated",
       chainType: "op",
-    },
-    BscTestnet: {
-      type: "http",
-      chainType: "l1",
-      url: "https://bnb-testnet.g.alchemy.com/v2/3BH10F7T5x3xp5eOUF9vhTnu7MIv7yz_",
-      accounts: [""],
-    },
+    }
+    // BscTestnet: {
+    //   type: "http",
+    //   chainType: "l1",
+    //   url: "https://bnb-testnet.g.alchemy.com/v2/3BH10F7T5x3xp5eOUF9vhTnu7MIv7yz_",
+    //   accounts: [""],
+    // },
   },
 };
 

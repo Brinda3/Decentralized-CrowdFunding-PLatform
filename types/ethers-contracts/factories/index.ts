@@ -2,5 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as aumFinTokenSol from './AumFinToken.sol/index.js';
-export * as campaignSol from './campaign.sol/index.js';
-export * as campaignfactorySol from './campaignfactory.sol/index.js';
+export * as upgradable from './upgradable/index.js';

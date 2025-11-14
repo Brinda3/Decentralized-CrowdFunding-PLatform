@@ -3,14 +3,16 @@
 /* eslint-disable */
 import type * as aumFinTokenSol from './AumFinToken.sol/index.js';
 export type { aumFinTokenSol };
-import type * as campaignSol from './campaign.sol/index.js';
-export type { campaignSol };
-import type * as campaignfactorySol from './campaignfactory.sol/index.js';
-export type { campaignfactorySol };
+import type * as upgradable from './upgradable/index.js';
+export type { upgradable };
 export * as factories from './factories/index.js';
-export type { AumFinBEPToken } from './AumFinToken.sol/AumFinBEPToken.js';
-export { AumFinBEPToken__factory } from './factories/AumFinToken.sol/AumFinBEPToken__factory.js';
-export type { CampaignVault } from './campaign.sol/CampaignVault.js';
-export { CampaignVault__factory } from './factories/campaign.sol/CampaignVault__factory.js';
-export type { CampaignFactory } from './campaignfactory.sol/CampaignFactory.js';
-export { CampaignFactory__factory } from './factories/campaignfactory.sol/CampaignFactory__factory.js';
+export type { BUSDMock } from './AumFinToken.sol/BUSDMock.js';
+export { BUSDMock__factory } from './factories/AumFinToken.sol/BUSDMock__factory.js';
+export type { CampaignProxy } from './upgradable/CampaignBeacon.sol/CampaignProxy.js';
+export { CampaignProxy__factory } from './factories/upgradable/CampaignBeacon.sol/CampaignProxy__factory.js';
+export type { CampaignFactory } from './upgradable/campaignFactoryImp.sol/CampaignFactory.js';
+export { CampaignFactory__factory } from './factories/upgradable/campaignFactoryImp.sol/CampaignFactory__factory.js';
+export type { CampaignFactoryProxy } from './upgradable/CampaignFactoryProxy.js';
+export { CampaignFactoryProxy__factory } from './factories/upgradable/CampaignFactoryProxy__factory.js';
+export type { CampaignVault } from './upgradable/campaignVaultImp.sol/CampaignVault.js';
+export { CampaignVault__factory } from './factories/upgradable/campaignVaultImp.sol/CampaignVault__factory.js';

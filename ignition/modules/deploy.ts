@@ -25,7 +25,19 @@ export default buildModule("RWAdeployV1", (m) => {
 
   const busd = m.contract("BUSDMock", [name, symbol, admin]);
 
-  const campaign = m.contract("CampaignVault", [[
+  const campaign = m.contract("CampaignVault", []);
+
+  const campaignProxy = m.contract("campaignProxy", [campaign, admin]);
+
+  // const campaignFactory = m.contract("CampaignFactory", [admin, campaignProxy]);
+
+  // const campaignFactoryProxy = m.contract("campaignFactoryProxy", [admin, campaignFactory]);
+
+  const encodedInitializeData = m.encodeFunctionCall(
+    campaign,
+   "initialize",
+    [[
+      admin,
       admin,
       cname,
       csymbol,
@@ -39,10 +51,11 @@ export default buildModule("RWAdeployV1", (m) => {
       _payoutType,
       maturityTime,
       interestPermile
-  ]]);
+  ]])
 
-  const campaignFactory = m.contract("CampaignFactory", [admin]);
+  m.call(campaignProxy, "initialize", [encodedInitializeData]);
 
 
-  return { busd , campaign, campaignFactory};
+
+  return { busd , campaign, campaignProxy  };
 });
